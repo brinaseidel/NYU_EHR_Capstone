@@ -1,2 +1,6 @@
 # NYU_EHR_Capstone
-Capstone project for the NYU MS in Data Science Program.
+This is a capstone project for the NYU MS in Data Science program. It was created by Sree Govindaprasad, Derek Yen, and Brina Seidel.
+
+
+
+
