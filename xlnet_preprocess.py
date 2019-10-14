@@ -1,4 +1,4 @@
-from pytorch_transformers import XLNetTokenizer
+from transformers import XLNetTokenizer
 import logging
 logger = logging.getLogger(__name__)
 import pandas as pd
@@ -32,14 +32,14 @@ class DataProcessor(object):
 
 	def get_examples(self, filename, set_type, data_dir = '/gpfs/data/razavianlab/ehr_transformer/ICD_model/'):
 		"""Gets a collection of `InputExample`s for the data set."""
-		df = pd.read_csv(data_dir + file_name)
+		df = pd.read_csv(data_dir + filename)
 		return self._create_examples(df, set_type)
 
 	def get_labels(self):
 		"""Gets the list of labels for this data set."""
 		return ["0", "1"]
 
-	 def _create_examples(self, df, set_type):
+	def _create_examples(self, df, set_type):
 		"""Creates examples for the training and dev sets."""
 		examples = []
 
@@ -82,7 +82,9 @@ def convert_examples_to_features(examples, max_seq_length,
 	
 	# Path to list of ICD codes and their count in the training data
 	label_map = loadICDDict(path = '/gpfs/data/razavianlab/ehr_transformer/analysis/trainICD_count_afterFill.csv', minCount=1000)
-
+	num_icd = len(label_map)
+	logger.info("Number of ICD codes: {}".format(num_icd))
+	
 	features = []
 	for (ex_index, example) in enumerate(examples):
 		if ex_index % 10000 == 0:
@@ -130,9 +132,9 @@ def convert_examples_to_features(examples, max_seq_length,
 
 
 		icd_id, unk = ICD2Idx(example.label.split() , label_map) 
-		icd_id = [i for i in icd_id if i < NUM_ICD]
+		icd_id = [i for i in icd_id if i < num_icd]
 
-		binary_label = np.zeros(NUM_ICD)
+		binary_label = np.zeros(num_icd)
 		for l in icd_id:
 			binary_label[l] = 1
 
@@ -179,21 +181,21 @@ def main():
 	tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
 
 	logger.info("***** Converting examples to features *****")
-	features = convert_examples_to_features(examples, max_seq_length = args.max_seq_length, tokenizer)
+	features = convert_examples_to_features(examples, max_seq_length = args.max_seq_length, tokenizer=tokenizer)
 	logger.info("  Num examples = %d", len(examples))
 
-	# TODO: Insert folder path
-	feature_save_path = '/gpfs/data/razavianlab/ehr_transformer_xlnet/'
-
+	#feature_save_path = '/gpfs/data/razavianlab/ehr_transformer_xlnet/'
+	feature_save_path = '/gpfs/home/bs3743/'
+	
 	all_input_ids = torch.stack([f.input_ids for f in features])
 	all_input_mask = torch.stack([f.input_mask for f in features])
 	all_segment_ids = torch.stack([f.segment_ids for f in features])
 	all_label_ids = torch.stack([f.label_id for f in features])
 	
-	torch.save(all_input_ids , feature_save_path + set_type + '_input_ids.pt')
-	torch.save(all_input_mask , feature_save_path + set_type + '_input_mask.pt') 
-	torch.save(all_segment_ids , feature_save_path + set_type + '_segment_ids.pt')
-	torch.save(all_label_ids , feature_save_path + set_type + '_labels.pt')
+	torch.save(all_input_ids , feature_save_path + args.set_type + '_input_ids.pt')
+	torch.save(all_input_mask , feature_save_path + args.set_type + '_input_mask.pt') 
+	torch.save(all_segment_ids , feature_save_path + args.set_type + '_segment_ids.pt')
+	torch.save(all_label_ids , feature_save_path + args.set_type + '_labels.pt')
 
 if __name__ == "__main__":
 	main()
