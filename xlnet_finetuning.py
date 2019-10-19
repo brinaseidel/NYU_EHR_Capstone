@@ -40,39 +40,44 @@ def set_seeds(seed, n_gpu):
 
 def initialize_optimizer(model, args):
 	no_decay = ['bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0},
-        {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0}
-        ]
-    optimizer = AdamW(optimizer_grouped_parameters, lr=4e-5, eps=1e-8)
+	optimizer_grouped_parameters = [
+		{'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0},
+		{'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0}
+		]
+	optimizer = AdamW(optimizer_grouped_parameters, lr=4e-5, eps=1e-8)
 	model, optimizer = amp.initialize(model, optimizer, opt_level= 'O1')
-    scheduler = WarmupLinearSchedule(optimizer, warmup_steps=0, t_total=len(train_dataloader)*args.num_train_epochs)
+	scheduler = WarmupLinearSchedule(optimizer, warmup_steps=0, t_total=len(train_dataloader)*args.num_train_epochs)
 	return optimizer, scheduler, model
 
-def train(dataloader, model, optimizer, scheduler, num_train_epochs, n_gpu, model_save_path, save_step = 100000, logging_step = 100000):
+def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_train_epochs, n_gpu, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, logging_step = 100000):
 	global_step = 0
+	# create folder to save all checkpoints for this model
+	model_save_path = os.path.join(models_folder, model_id)
+	if not os.path.exists(model_save_path):
+		os.makedirs(model_save_path)
+
 	for epoch in range(num_train_epochs):
-        with tqdm(total=len(dataloader), desc="Epoch {}".format(epoch)) as progressbar:
+		with tqdm(total=len(train_dataloader), desc="Epoch {}".format(epoch)) as progressbar:
 			train_loss = 0
 			number_steps = 0
-			for i, batch in enumerate(dataloader):
+			for i, batch in enumerate(train_dataloader):
 				model.train()
 				input_ids, input_mask, segment_ids, label_ids = batch
 
-	            input_ids = input_ids.to(device).long()
-	            input_mask = input_mask.to(device).long()
-	            segment_ids = segment_ids.to(device).long()
+				input_ids = input_ids.to(device).long()
+				input_mask = input_mask.to(device).long()
+				segment_ids = segment_ids.to(device).long()
 
 				# Might need to add .half() or .long() depending on amp versions
-	            label_ids = label_ids.to(device)
+				label_ids = label_ids.to(device)
 
-	            logits = model(input_ids, segment_ids, input_mask, labels=None)
+				logits = model(input_ids, segment_ids, input_mask, labels=None)
 
-	            criterion = BCEWithLogitsLoss()
-	            loss = criterion(logits, label_ids)
+				criterion = BCEWithLogitsLoss()
+				loss = criterion(logits, label_ids)
 
-	            if n_gpu > 1:
-	    			loss = loss.mean()
+				if n_gpu > 1:
+					loss = loss.mean()
 
 				# Required for fp16
 				with amp.scale_loss(loss, optimizer) as scaled_loss:
@@ -85,37 +90,33 @@ def train(dataloader, model, optimizer, scheduler, num_train_epochs, n_gpu, mode
 				mean_loss = train_loss/number_steps
 
 				# TODO: Calculate training loss after some specified number of batches
-				pbar.update(1)
-				pbar.set_postfix_str("Loss: {.5f}".format(mean_loss))
+				progressbar.update(1)
+				progressbar.set_postfix_str("Loss: {.5f}".format(mean_loss))
 
-                scheduler.step()
-                optimizer.step()
-                model.zero_grad()
+				scheduler.step()
+				optimizer.step()
+				model.zero_grad()
 
 				global_step += 1
 
-                if logging_step > 0 and global_step % logging_step == 0:
-                    # Log metrics
-					# TODO: Create evaluate function
-                    results = evaluate(model, tokenizer)
+				if logging_step > 0 and global_step % logging_step == 0:
+					# Log metrics
+					eval_file_name = model_id + '_checkpoint_{}.json'.format(global_step % logging_step)
+					results = evaluate(dataloader = val_dataloader, model = model, eval_file_name = eval_file_name)
 
-                if save_step > 0 and global_step % save_step == 0:
-                    # Save model and optimizer checkpoints
-					model_checkpoint_file = 'model_checkpoint_{}'.format(global_step % save_step)
-                    model_loc = os.path.join(model_save_path, checkpoint_file)
-					optimizer_checkpoint_file = 'optimizer_checkpoint_{}'.format(global_step % save_step)
-                    optimizer_loc = os.path.join(model_save_path, optimizer_checkpoint_file)
+				if save_step > 0 and global_step % save_step == 0:
+					# Save model and optimizer checkpoints
+					checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(global_step % save_step))
+					
+					if not os.path.exists(checkpoint_save_path):
+						os.makedirs(checkpoint_save_path)
 
-                    if not os.path.exists(model_loc):
-                        os.makedirs(model_loc)
-                    if not os.path.exists(optimizer_loc):
-                        os.makedirs(optimizer_loc)
-                    model_to_save = model.module if hasattr(model, 'module') else model
-                    model_to_save.save_pretrained(model_save_path)
+					model_to_save = model.module if hasattr(model, 'module') else model
+					model_to_save.save_pretrained(checkpoint_save_path)
 					torch.save({'optimizer':optimizer.state_dict(),
 								'scheduler': scheduler.state_dict(),
-								'step': global_step}, optimizer_loc)
-                    logger.info("Saving model checkpoint to {}".format(model_loc))
+								'step': global_step}, os.path.join(checkpoint_save_path, 'optimizer.pt'))
+					logger.info("Saving model checkpoint to {}".format(checkpoint_save_path))
 
 def main():
 
@@ -155,12 +156,12 @@ def main():
 						default=100000,
 						type=int,
 						help="Number of steps to save model parameters")
-	parser.add_argument("--model_save_path",
+	parser.add_argument("--model_id",
 						type=str,
-						help="Directory to save the model and optimizer")
-    parser.add_argument('--fp16',
-                        action='store_true',
-                        help="Whether to use 16-bit float precision instead of 32-bit")
+						help="Model and optimizer will be saved at '/gpfs/data/razavianlab/capstone19/models/model_id'. ")
+	parser.add_argument('--fp16',
+						action='store_true',
+						help="Whether to use 16-bit float precision instead of 32-bit")
 	args = parser.parse_args()
 
 	# Load data
@@ -177,14 +178,14 @@ def main():
 
 	optimizer, scheduler, model = initialize_optimizer(model, args)
 
-    logger.info("***** Running training *****")
-    logger.info("  Num batches = %d", len(train_dataloader))
-    logger.info("  Num Epochs = %d", args.num_train_epochs)
-    logger.info("  Total train batch size  = %d", args.batch_size])
-    logger.info("  Total optimization steps = %d", len(train_dataloader)*args.num_train_epochs)
+	logger.info("***** Running training *****")
+	logger.info("  Num batches = %d", len(train_dataloader))
+	logger.info("  Num Epochs = %d", args.num_train_epochs)
+	logger.info("  Total train batch size  = %d", args.batch_size)
+	logger.info("  Total optimization steps = %d", len(train_dataloader)*args.num_train_epochs)
 
 	model = torch.nn.DataParallel(model)
-	train(dataloader = train_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, model_save_path = args.model_save_path, save_step = args.save_step, logging_step = args.logging_step)
+	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, model_id = args.model_id, save_step = args.save_step, logging_step = args.logging_step)
 
 if __name__ == "__main__":
 	main()
