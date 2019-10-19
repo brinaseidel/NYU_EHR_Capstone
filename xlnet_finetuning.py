@@ -121,9 +121,11 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 def main():
 
 	# Section: Set device for PyTorch
-	if torch.cuda.is_available():
-		 # might need to update when using more than 1 GPU
-		device = torch.device("cuda")
+	if torch.cuda.is_availables():
+		# might need to update when using more than 1 GPU
+		rank = 0
+		torch.cuda.set_device(rank)
+		device = torch.device("cuda", rank)
 		torch.distributed.init_process_group(backend='nccl')
 		n_gpu = torch.cuda.device_count()
 	else:
