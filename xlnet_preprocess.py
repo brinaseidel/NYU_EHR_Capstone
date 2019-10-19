@@ -184,8 +184,7 @@ def main():
 	features = convert_examples_to_features(examples, max_seq_length = args.max_seq_length, tokenizer=tokenizer)
 	logger.info("  Num examples = %d", len(examples))
 
-	#feature_save_path = '/gpfs/data/razavianlab/ehr_transformer_xlnet/'
-	feature_save_path = '/gpfs/home/bs3743/'
+	feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/'
 	
 	all_input_ids = torch.stack([f.input_ids for f in features])
 	all_input_mask = torch.stack([f.input_mask for f in features])

@@ -15,7 +15,7 @@ from transformers import (XLNetForSequenceClassification, XLNetConfig)
 from xlnet_evaluation import evaluate
 import random
 
-def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/ehr_transformer_xlnet/'):
+def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/'):
 	input_ids = torch.load(feature_save_path + set_type + '_input_ids.pt')
 	input_mask = torch.load(feature_save_path + set_type + '_input_mask.pt')
 	segment_ids = torch.load(feature_save_path + set_type + '_segment_ids.pt')
