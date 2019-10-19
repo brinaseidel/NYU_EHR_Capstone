@@ -13,6 +13,7 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 							  TensorDataset)
 from transformers import (XLNetForSequenceClassification, XLNetConfig)
 from xlnet_evaluation import evaluate
+import random
 
 def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/ehr_transformer_xlnet/'):
 	input_ids = torch.load(feature_save_path + set_type + '_input_ids.pt')
@@ -121,12 +122,12 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 def main():
 
 	# Section: Set device for PyTorch
-	if torch.cuda.is_availables():
+	if torch.cuda.is_available():
 		# might need to update when using more than 1 GPU
 		rank = 0
 		torch.cuda.set_device(rank)
 		device = torch.device("cuda", rank)
-		torch.distributed.init_process_group(backend='nccl')
+		#torch.distributed.init_process_group(backend='nccl')
 		n_gpu = torch.cuda.device_count()
 	else:
 		device = torch.device("cpu")
@@ -187,7 +188,7 @@ def main():
 	logger.info("  Total train batch size  = %d", args.batch_size)
 	logger.info("  Total optimization steps = %d", len(train_dataloader)*args.num_train_epochs)
 
-	model = torch.nn.DataParallel(model)
+	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, model_id = args.model_id, save_step = args.save_step, logging_step = args.logging_step)
 
 if __name__ == "__main__":
