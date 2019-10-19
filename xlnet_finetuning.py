@@ -129,7 +129,6 @@ def main():
 	else:
 		device = torch.device("cpu")
 		n_gpu = 0
-	set_seeds(seed = args.seed, n_gpu = n_gpu)
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
@@ -138,12 +137,10 @@ def main():
 						default=32,
 						type=int,
 						help="Indicate batch size")
-
 	parser.add_argument('--seed',
 						type=int,
 						default=42,
 						help="random seed for initialization")
-
 	parser.add_argument("--num_train_epochs",
 						default=3.0,
 						type=float,
@@ -163,6 +160,10 @@ def main():
 						action='store_true',
 						help="Whether to use 16-bit float precision instead of 32-bit")
 	args = parser.parse_args()
+
+	# Set random seed
+	set_seeds(seed = args.seed, n_gpu = n_gpu)
+
 
 	# Load data
 	logger.info("Loading train dataset")
