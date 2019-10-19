@@ -119,7 +119,7 @@ def evaluate(dataloader, model,eval_file_name, eval_folder = '/gpfs/data/razavia
 def main():
 
 	# TODO: Add all main methods 
-
+	return
 
 if __name__ == "__main__":
 	main()
