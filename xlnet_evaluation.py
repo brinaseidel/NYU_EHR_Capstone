@@ -12,7 +12,10 @@ logger = logging.getLogger(__name__)
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 							  TensorDataset)
 from transformers import (XLNetForSequenceClassification, XLNetConfig)
-from sklearn.metrics import matthews_corrcoef, f1_score ,roc_auc_score
+from sklearn import metrics
+from tqdm import tqdm
+from torch.nn import BCEWithLogitsLoss
+import json
 
 def macroAUC(pred, true):
 	auc = []
@@ -32,7 +35,7 @@ def topKPrecision(pred, true, k):
 	result = np.sum(true_sort[:,-k:].astype(np.float64)) / k / n_sample
 	return result
 
-def evaluate(dataloader, model,eval_file_name, eval_folder = '/gpfs/data/razavianlab/capstone19/evals'):
+def evaluate(dataloader, model,eval_file_name, n_gpu, device, eval_folder = '/gpfs/data/razavianlab/capstone19/evals'):
 	logger.info("***** Running evaluation *****")
 	logger.info("  Num batches = %d", len(dataloader))
 	eval_loss = 0.0
@@ -47,16 +50,15 @@ def evaluate(dataloader, model,eval_file_name, eval_folder = '/gpfs/data/razavia
 			input_ids = input_ids.to(device).long()
 			input_mask = input_mask.to(device).long()
 			segment_ids = segment_ids.to(device).long()
-
-			# Might need to add .half() or .long() depending on amp versions
-			label_ids = label_ids.to(device)
+			label_ids = label_ids.to(device).float()
+			
 			with torch.no_grad():
-				logits = model(input_ids, segment_ids, input_mask, labels=None)
+				logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
 			criterion = BCEWithLogitsLoss()
 			loss = criterion(logits, label_ids)
 
 			# TODO: Check why we take mean
-			print("loss = ", loss)
+			#print("loss = ", loss)
 			if n_gpu > 1:
 				eval_loss += loss.mean().item()
 			else:
@@ -74,19 +76,19 @@ def evaluate(dataloader, model,eval_file_name, eval_folder = '/gpfs/data/razavia
 	preds = torch.cat(preds).numpy()
 	target = torch.cat(target).byte().numpy()
 
-	microAUC = roc_auc_score(target, preds, average='micro')
-	macroAUC = macroAUC(preds, target)
+	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
+	macro_AUC = macroAUC(preds, target)
 	top1_precision = topKPrecision(preds, target, k = 1)
 	top3_precision = topKPrecision(preds, target, k = 3)
 	top5_precision = topKPrecision(preds, target, k = 5)
 
-	logger.info("microAUC : {} ,  macroAUC : {}".format(str(microAUC) ,str(macroAUC)))
+	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
 	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
 
 	results = { 
 				'loss': eval_loss,  
-				'microAUC' : microAUC ,
-				'macroAUC' : macroAUC, 
+				'micro_AUC' : micro_AUC ,
+				'macro_AUC' : macro_AUC, 
 				'top1_precision' : top1_precision , 
 				'top3_precision' : top3_precision , 
 				'top5_precision' : top5_precision

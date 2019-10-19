@@ -12,8 +12,13 @@ logger = logging.getLogger(__name__)
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 							  TensorDataset)
 from transformers import (XLNetForSequenceClassification, XLNetConfig)
-from xlnet_evaluation import evaluate
+from xlnet_evaluation import (evaluate, macroAUC, topKPrecision)
 import random
+from transformers.optimization import (AdamW, WarmupLinearSchedule)
+from tqdm import tqdm
+from torch.nn import BCEWithLogitsLoss
+from sklearn import metrics
+import json
 
 def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/'):
 	input_ids = torch.load(feature_save_path + set_type + '_input_ids.pt')
@@ -23,10 +28,7 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
-	if torch.cuda.is_available():
-		sampler = DistributedSampler(data)
-	else:
-		sampler = RandomSampler(data)
+	sampler = RandomSampler(data)
 
 	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
 
@@ -39,7 +41,7 @@ def set_seeds(seed, n_gpu):
 	if n_gpu > 0:
 		torch.cuda.manual_seed_all(seed)
 
-def initialize_optimizer(model, args):
+def initialize_optimizer(model, train_dataloader, args):
 	no_decay = ['bias', 'LayerNorm.weight']
 	optimizer_grouped_parameters = [
 		{'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0},
@@ -50,7 +52,7 @@ def initialize_optimizer(model, args):
 	scheduler = WarmupLinearSchedule(optimizer, warmup_steps=0, t_total=len(train_dataloader)*args.num_train_epochs)
 	return optimizer, scheduler, model
 
-def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_train_epochs, n_gpu, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, logging_step = 100000):
+def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, logging_step = 100000):
 	global_step = 0
 	# create folder to save all checkpoints for this model
 	model_save_path = os.path.join(models_folder, model_id)
@@ -70,10 +72,10 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 				segment_ids = segment_ids.to(device).long()
 
 				# Might need to add .half() or .long() depending on amp versions
-				label_ids = label_ids.to(device)
-
-				logits = model(input_ids, segment_ids, input_mask, labels=None)
-
+				label_ids = label_ids.to(device).float()
+				
+				logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
+				
 				criterion = BCEWithLogitsLoss()
 				loss = criterion(logits, label_ids)
 
@@ -92,7 +94,7 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 
 				# TODO: Calculate training loss after some specified number of batches
 				progressbar.update(1)
-				progressbar.set_postfix_str("Loss: {.5f}".format(mean_loss))
+				progressbar.set_postfix_str("Loss: {0:.5f}".format(mean_loss))
 
 				scheduler.step()
 				optimizer.step()
@@ -102,12 +104,12 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 
 				if logging_step > 0 and global_step % logging_step == 0:
 					# Log metrics
-					eval_file_name = model_id + '_checkpoint_{}.json'.format(global_step % logging_step)
-					results = evaluate(dataloader = val_dataloader, model = model, eval_file_name = eval_file_name)
+					eval_file_name = model_id + '_checkpoint_{}.json'.format(global_step/logging_step)
+					results = evaluate(dataloader = val_dataloader, model = model, eval_file_name = eval_file_name, n_gpu=n_gpu, device=device)
 
 				if save_step > 0 and global_step % save_step == 0:
 					# Save model and optimizer checkpoints
-					checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(global_step % save_step))
+					checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(global_step/save_step))
 					
 					if not os.path.exists(checkpoint_save_path):
 						os.makedirs(checkpoint_save_path)
@@ -132,7 +134,8 @@ def main():
 	else:
 		device = torch.device("cpu")
 		n_gpu = 0
-
+        
+	print("N GPU: ", n_gpu)
 	# Parse arguments
 	parser = argparse.ArgumentParser()
 
@@ -146,7 +149,7 @@ def main():
 						help="random seed for initialization")
 	parser.add_argument("--num_train_epochs",
 						default=3.0,
-						type=float,
+						type=int,
 						help="Total number of training epochs to perform.")
 	parser.add_argument("--logging_step",
 						default=100000,
@@ -176,11 +179,11 @@ def main():
 
 	# Load pretrained model
 	num_train_optimization_steps = args.num_train_epochs * len(train_dataloader)
-	config = XLNetConfig.from_pretrained('xlnet-base-cased', num_labels=2) # TODO: check if we need this
-	model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased')
+	config = XLNetConfig.from_pretrained('xlnet-base-cased', num_labels=2292) # TODO: check if we need this
+	model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', config=config)
 	model.to(device)
 
-	optimizer, scheduler, model = initialize_optimizer(model, args)
+	optimizer, scheduler, model = initialize_optimizer(model, train_dataloader, args)
 
 	logger.info("***** Running training *****")
 	logger.info("  Num batches = %d", len(train_dataloader))
@@ -189,7 +192,7 @@ def main():
 	logger.info("  Total optimization steps = %d", len(train_dataloader)*args.num_train_epochs)
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, model_id = args.model_id, save_step = args.save_step, logging_step = args.logging_step)
+	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, logging_step = args.logging_step)
 
 if __name__ == "__main__":
 	main()

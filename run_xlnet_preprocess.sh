@@ -14,4 +14,4 @@ pip install --user transformers
 
 echo -e "GPUS = $CUDA_VISIBLE_DEVICES\n"
 
-python xlnet_preprocess.py --filename "small.csv.gz" --set_type "small" --max_seq_length 128
+python xlnet_preprocess.py --filename "small.csv.gz" --set_type "small" --max_seq_length 256
