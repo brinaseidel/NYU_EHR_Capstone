@@ -1,0 +1,1411 @@
+WARNING: gcc/4.9.3 cannot be loaded due to a conflict.
+HINT: Might try "module unload gcc" first.
+Requirement already satisfied: transformers in /gpfs/home/dy1078/.local/lib/python3.6/site-packages (2.1.1)
+Requirement already satisfied: numpy in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from transformers) (1.14.3)
+Requirement already satisfied: requests in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from transformers) (2.19.1)
+Requirement already satisfied: sentencepiece in /gpfs/home/dy1078/.local/lib/python3.6/site-packages (from transformers) (0.1.83)
+Requirement already satisfied: sacremoses in /gpfs/home/dy1078/.local/lib/python3.6/site-packages (from transformers) (0.0.35)
+Requirement already satisfied: boto3 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from transformers) (1.9.43)
+Requirement already satisfied: tqdm in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from transformers) (4.23.4)
+Requirement already satisfied: regex in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from transformers) (2017.4.5)
+Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from requests->transformers) (3.0.4)
+Requirement already satisfied: urllib3<1.24,>=1.21.1 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from requests->transformers) (1.23)
+Requirement already satisfied: certifi>=2017.4.17 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from requests->transformers) (2018.4.16)
+Requirement already satisfied: idna<2.8,>=2.5 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from requests->transformers) (2.7)
+Requirement already satisfied: click in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from sacremoses->transformers) (6.7)
+Requirement already satisfied: joblib in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from sacremoses->transformers) (0.13.2)
+Requirement already satisfied: six in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from sacremoses->transformers) (1.11.0)
+Requirement already satisfied: jmespath<1.0.0,>=0.7.1 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from boto3->transformers) (0.9.3)
+Requirement already satisfied: s3transfer<0.2.0,>=0.1.10 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from boto3->transformers) (0.1.13)
+Requirement already satisfied: botocore<1.13.0,>=1.12.43 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from boto3->transformers) (1.12.43)
+Requirement already satisfied: python-dateutil<3.0.0,>=2.1 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from botocore<1.13.0,>=1.12.43->boto3->transformers) (2.7.3)
+Requirement already satisfied: docutils>=0.10 in /gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages (from botocore<1.13.0,>=1.12.43->boto3->transformers) (0.14)
+ERROR: Error checking for conflicts.
+Traceback (most recent call last):
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2691, in _dep_map
+    return self.__dep_map
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2806, in __getattr__
+    raise AttributeError(attr)
+AttributeError: _Distribution__dep_map
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_internal/commands/install.py", line 517, in _warn_about_conflicts
+    package_set, _dep_info = check_install_conflicts(to_install)
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_internal/operations/check.py", line 110, in check_install_conflicts
+    package_set, _ = create_package_set_from_installed()
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_internal/operations/check.py", line 49, in create_package_set_from_installed
+    package_set[name] = PackageDetails(dist.version, dist.requires())
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2727, in requires
+    dm = self._dep_map
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2693, in _dep_map
+    self.__dep_map = self._filter_extras(self._build_dep_map())
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2721, in _build_dep_map
+    for extra, reqs in split_sections(self._get_metadata(name)):
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 3189, in split_sections
+    for line in yield_lines(s):
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2378, in yield_lines
+    for ss in strs:
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 2758, in _get_metadata
+    for line in self.get_metadata_lines(name):
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 1423, in get_metadata_lines
+    return yield_lines(self.get_metadata(name))
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 1419, in get_metadata
+    value = self._get(self._fn(self.egg_info, name))
+  File "/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/pip/_vendor/pkg_resources/__init__.py", line 1607, in _get
+    with open(path, 'rb') as stream:
+PermissionError: [Errno 13] Permission denied: '/gpfs/share/apps/python/gpu/3.6.5/lib/python3.6/site-packages/openmmlib-0.0.0-py3.6-linux-x86_64.egg/EGG-INFO/requires.txt'
+WARNING: You are using pip version 19.2.3, however version 19.3.1 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+GPUS = 0,1,2,3
+
+I1021 17:37:22.939572 140697115522880 file_utils.py:39] PyTorch version 1.1.0 available.
+N GPU:  4
+I1021 17:37:26.711362 140697115522880 xlnet_finetuning.py:175] Loading train dataset
+I1021 17:37:26.801464 140697115522880 xlnet_finetuning.py:177] Loading validation dataset
+I1021 17:37:26.958291 140697115522880 configuration_utils.py:151] loading configuration file https://s3.amazonaws.com/models.huggingface.co/bert/xlnet-base-cased-config.json from cache at /gpfs/home/dy1078/.cache/torch/transformers/c9cc6e53904f7f3679a31ec4af244f4419e25ebc8e71ebf8c558a31cbcf07fc8.ef1824921bc0786e97dc88d55eb17aabf18aac90f24bd34c0650529e7ba27d6f
+I1021 17:37:26.959322 140697115522880 configuration_utils.py:168] Model config {
+  "attn_type": "bi",
+  "bi_data": false,
+  "clamp_len": -1,
+  "d_head": 64,
+  "d_inner": 3072,
+  "d_model": 768,
+  "dropout": 0.1,
+  "end_n_top": 5,
+  "ff_activation": "gelu",
+  "finetuning_task": null,
+  "initializer_range": 0.02,
+  "layer_norm_eps": 1e-12,
+  "mem_len": null,
+  "n_head": 12,
+  "n_layer": 12,
+  "n_token": 32000,
+  "num_labels": 2292,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "output_past": true,
+  "pruned_heads": {},
+  "reuse_len": null,
+  "same_length": false,
+  "start_n_top": 5,
+  "summary_activation": "tanh",
+  "summary_last_dropout": 0.1,
+  "summary_type": "last",
+  "summary_use_proj": true,
+  "torchscript": false,
+  "untie_r": true,
+  "use_bfloat16": false
+}
+
+I1021 17:37:27.026819 140697115522880 modeling_utils.py:337] loading weights file https://s3.amazonaws.com/models.huggingface.co/bert/xlnet-base-cased-pytorch_model.bin from cache at /gpfs/home/dy1078/.cache/torch/transformers/24197ba0ce5dbfe23924431610704c88e2c0371afa49149360e4c823219ab474.7eac4fe898a021204e63c88c00ea68c60443c57f94b4bc3c02adbde6465745ac
+I1021 17:37:30.983768 140697115522880 modeling_utils.py:405] Weights of XLNetForSequenceClassification not initialized from pretrained model: ['sequence_summary.summary.weight', 'sequence_summary.summary.bias', 'logits_proj.weight', 'logits_proj.bias']
+I1021 17:37:30.984354 140697115522880 modeling_utils.py:408] Weights from pretrained model not used in XLNetForSequenceClassification: ['lm_loss.weight', 'lm_loss.bias']
+Selected optimization level O1:  Insert automatic casts around Pytorch functions and Tensor methods.
+
+Defaults for this optimization level are:
+enabled                : True
+opt_level              : O1
+cast_model_type        : None
+patch_torch_functions  : True
+keep_batchnorm_fp32    : None
+master_weights         : None
+loss_scale             : dynamic
+Processing user overrides (additional kwargs that are not None)...
+After processing overrides, optimization options are:
+enabled                : True
+opt_level              : O1
+cast_model_type        : None
+patch_torch_functions  : True
+keep_batchnorm_fp32    : None
+master_weights         : None
+loss_scale             : dynamic
+I1021 17:37:43.295972 140697115522880 xlnet_finetuning.py:188] ***** Running training *****
+I1021 17:37:43.296239 140697115522880 xlnet_finetuning.py:189]   Num batches = 31
+I1021 17:37:43.296895 140697115522880 xlnet_finetuning.py:190]   Num Epochs = 3
+I1021 17:37:43.297061 140697115522880 xlnet_finetuning.py:191]   Total train batch size  = 32
+I1021 17:37:43.297219 140697115522880 xlnet_finetuning.py:192]   Total optimization steps = 93
+Epoch 0:   0%|          | 0/31 [00:00<?, ?it/s]xlnet_finetuning.py:89: UserWarning: torch.nn.utils.clip_grad_norm is now deprecated in favor of torch.nn.utils.clip_grad_norm_.
+  torch.nn.utils.clip_grad_norm(amp.master_params(optimizer), max_norm = 1)
+Epoch 0:   3%|3         | 1/31 [00:26<13:20, 26.70s/it]Epoch 0:   3%|3         | 1/31 [00:26<13:20, 26.70s/it, Loss: 0.72192]Epoch 0:   6%|6         | 2/31 [00:27<09:05, 18.82s/it, Loss: 0.72192]Epoch 0:   6%|6         | 2/31 [00:27<09:05, 18.82s/it, Loss: 0.70915]Epoch 0:  10%|9         | 3/31 [00:27<06:12, 13.29s/it, Loss: 0.70915]Epoch 0:  10%|9         | 3/31 [00:27<06:12, 13.29s/it, Loss: 0.70019]Epoch 0:  13%|#2        | 4/31 [00:27<04:14,  9.41s/it, Loss: 0.70019]Epoch 0:  13%|#2        | 4/31 [00:27<04:14,  9.41s/it, Loss: 0.69399]Epoch 0:  16%|#6        | 5/31 [00:28<02:53,  6.69s/it, Loss: 0.69399]Epoch 0:  16%|#6        | 5/31 [00:28<02:53,  6.69s/it, Loss: 0.68804]I1021 17:38:11.538822 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:38:11.539234 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.13it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.13it/s, Loss: 0.65114][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.12it/s, Loss: 0.65114][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.12it/s, Loss: 0.65191][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.01it/s, Loss: 0.65191][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.01it/s, Loss: 0.65162][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.00it/s, Loss: 0.65162][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.00it/s, Loss: 0.65104][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.01it/s, Loss: 0.65104][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.01it/s, Loss: 0.65121][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.94it/s, Loss: 0.65121][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.94it/s, Loss: 0.65136][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.94it/s, Loss: 0.65136][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.94it/s, Loss: 0.65112][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.65112][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.65120][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.93it/s, Loss: 0.65120][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.93it/s, Loss: 0.65110][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.91it/s, Loss: 0.65110][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.91it/s, Loss: 0.65141][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.96it/s, Loss: 0.65141][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.96it/s, Loss: 0.65126][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.65126][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.65116][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.91it/s, Loss: 0.65116][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.91it/s, Loss: 0.65129][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.92it/s, Loss: 0.65129][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.92it/s, Loss: 0.65138][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.91it/s, Loss: 0.65138][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.91it/s, Loss: 0.65138][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.96it/s, Loss: 0.65138][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.96it/s, Loss: 0.65132][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.98it/s, Loss: 0.65132][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.98it/s, Loss: 0.65130][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.99it/s, Loss: 0.65130][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.99it/s, Loss: 0.65138][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  7.01it/s, Loss: 0.65138][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  7.01it/s, Loss: 0.65146][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.97it/s, Loss: 0.65146][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.97it/s, Loss: 0.65141][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.91it/s, Loss: 0.65141][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.91it/s, Loss: 0.65139][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.65139][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.65144][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.87it/s, Loss: 0.65144][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.87it/s, Loss: 0.65140][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.86it/s, Loss: 0.65140][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.86it/s, Loss: 0.65138][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.45it/s, Loss: 0.65138][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.45it/s, Loss: 0.65141][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.65it/s, Loss: 0.65141][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.65it/s, Loss: 0.65141][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.75it/s, Loss: 0.65141][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.75it/s, Loss: 0.65140][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.82it/s, Loss: 0.65140][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.82it/s, Loss: 0.65142][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.81it/s, Loss: 0.65142][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.81it/s, Loss: 0.65136][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.82it/s, Loss: 0.65136][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.82it/s, Loss: 0.65139][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.89it/s, Loss: 0.65139][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.89it/s, Loss: 0.65137][A
+[AI1021 17:38:17.787769 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.49982608471335555 ,  macro_AUC : 0.4942990798965728
+I1021 17:38:17.788311 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0010080645161290322 ,  top3_precision : 0.0036962365591397847, top5_precision : 0.004637096774193548
+I1021 17:38:17.818497 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_1/config.json
+I1021 17:38:18.203910 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_1/pytorch_model.bin
+I1021 17:38:18.913053 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_1
+Epoch 0:  19%|#9        | 6/31 [00:35<02:54,  7.00s/it, Loss: 0.68804]Epoch 0:  19%|#9        | 6/31 [00:35<02:54,  7.00s/it, Loss: 0.68267]Epoch 0:  23%|##2       | 7/31 [00:36<01:59,  5.00s/it, Loss: 0.68267]Epoch 0:  23%|##2       | 7/31 [00:36<01:59,  5.00s/it, Loss: 0.67729]Epoch 0:  26%|##5       | 8/31 [00:36<01:22,  3.60s/it, Loss: 0.67729]Epoch 0:  26%|##5       | 8/31 [00:36<01:22,  3.60s/it, Loss: 0.67202]Epoch 0:  29%|##9       | 9/31 [00:36<00:57,  2.62s/it, Loss: 0.67202]Epoch 0:  29%|##9       | 9/31 [00:36<00:57,  2.62s/it, Loss: 0.66617]Epoch 0:  32%|###2      | 10/31 [00:37<00:40,  1.93s/it, Loss: 0.66617]Epoch 0:  32%|###2      | 10/31 [00:37<00:40,  1.93s/it, Loss: 0.66046]I1021 17:38:20.596245 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:38:20.596633 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.00it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.00it/s, Loss: 0.58564][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.91it/s, Loss: 0.58564][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.91it/s, Loss: 0.58589][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.92it/s, Loss: 0.58589][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.92it/s, Loss: 0.58595][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.93it/s, Loss: 0.58595][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.93it/s, Loss: 0.58609][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.92it/s, Loss: 0.58609][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.92it/s, Loss: 0.58612][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.97it/s, Loss: 0.58612][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.97it/s, Loss: 0.58613][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.97it/s, Loss: 0.58613][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.97it/s, Loss: 0.58614][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.58614][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.58611][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.01it/s, Loss: 0.58611][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.01it/s, Loss: 0.58609][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  7.00it/s, Loss: 0.58609][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  7.00it/s, Loss: 0.58609][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  7.01it/s, Loss: 0.58609][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  7.01it/s, Loss: 0.58606][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  7.04it/s, Loss: 0.58606][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  7.04it/s, Loss: 0.58606][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.68it/s, Loss: 0.58606][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.68it/s, Loss: 0.58606][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.80it/s, Loss: 0.58606][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.80it/s, Loss: 0.58604][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.78it/s, Loss: 0.58604][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.78it/s, Loss: 0.58604][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.79it/s, Loss: 0.58604][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.79it/s, Loss: 0.58603][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.87it/s, Loss: 0.58603][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.87it/s, Loss: 0.58602][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.94it/s, Loss: 0.58602][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.94it/s, Loss: 0.58604][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.99it/s, Loss: 0.58604][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.99it/s, Loss: 0.58607][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.79it/s, Loss: 0.58607][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.79it/s, Loss: 0.58606][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.90it/s, Loss: 0.58606][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.90it/s, Loss: 0.58606][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.58606][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.58607][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.92it/s, Loss: 0.58607][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.92it/s, Loss: 0.58605][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  7.00it/s, Loss: 0.58605][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  7.00it/s, Loss: 0.58604][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.95it/s, Loss: 0.58604][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.95it/s, Loss: 0.58605][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.92it/s, Loss: 0.58605][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.92it/s, Loss: 0.58603][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.94it/s, Loss: 0.58603][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.94it/s, Loss: 0.58603][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.99it/s, Loss: 0.58603][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.99it/s, Loss: 0.58601][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.91it/s, Loss: 0.58601][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.91it/s, Loss: 0.58601][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.98it/s, Loss: 0.58601][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.98it/s, Loss: 0.58601][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.00it/s, Loss: 0.58601][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.00it/s, Loss: 0.58602][A
+[AI1021 17:38:26.801829 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.4940367642086826 ,  macro_AUC : 0.4928192316756998
+I1021 17:38:26.802244 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0010080645161290322 ,  top3_precision : 0.0036962365591397847, top5_precision : 0.005040322580645161
+I1021 17:38:26.811821 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_2/config.json
+I1021 17:38:27.181052 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_2/pytorch_model.bin
+I1021 17:38:27.966661 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_2
+Epoch 0:  35%|###5      | 11/31 [00:44<01:13,  3.67s/it, Loss: 0.66046]Epoch 0:  35%|###5      | 11/31 [00:44<01:13,  3.67s/it, Loss: 0.65465]Epoch 0:  39%|###8      | 12/31 [00:45<00:50,  2.67s/it, Loss: 0.65465]Epoch 0:  39%|###8      | 12/31 [00:45<00:50,  2.67s/it, Loss: 0.64912]Epoch 0:  42%|####1     | 13/31 [00:45<00:35,  1.97s/it, Loss: 0.64912]Epoch 0:  42%|####1     | 13/31 [00:45<00:35,  1.97s/it, Loss: 0.64390]Epoch 0:  45%|####5     | 14/31 [00:45<00:25,  1.48s/it, Loss: 0.64390]Epoch 0:  45%|####5     | 14/31 [00:45<00:25,  1.48s/it, Loss: 0.63879]Epoch 0:  48%|####8     | 15/31 [00:46<00:18,  1.13s/it, Loss: 0.63879]Epoch 0:  48%|####8     | 15/31 [00:46<00:18,  1.13s/it, Loss: 0.63377]I1021 17:38:29.642506 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:38:29.642838 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.86it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.86it/s, Loss: 0.53773][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.94it/s, Loss: 0.53773][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.94it/s, Loss: 0.53781][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.89it/s, Loss: 0.53781][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.89it/s, Loss: 0.53782][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.87it/s, Loss: 0.53782][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.87it/s, Loss: 0.53780][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:04,  6.47it/s, Loss: 0.53780][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:04,  6.47it/s, Loss: 0.53781][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.53it/s, Loss: 0.53781][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.53it/s, Loss: 0.53782][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.63it/s, Loss: 0.53782][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.63it/s, Loss: 0.53786][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.75it/s, Loss: 0.53786][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.75it/s, Loss: 0.53785][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.76it/s, Loss: 0.53785][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.76it/s, Loss: 0.53785][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.79it/s, Loss: 0.53785][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.79it/s, Loss: 0.53782][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.83it/s, Loss: 0.53782][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.83it/s, Loss: 0.53780][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.88it/s, Loss: 0.53780][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.88it/s, Loss: 0.53780][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.79it/s, Loss: 0.53780][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.79it/s, Loss: 0.53782][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.81it/s, Loss: 0.53782][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.81it/s, Loss: 0.53781][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.87it/s, Loss: 0.53781][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.87it/s, Loss: 0.53783][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.92it/s, Loss: 0.53783][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.92it/s, Loss: 0.53782][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.89it/s, Loss: 0.53782][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.89it/s, Loss: 0.53782][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.88it/s, Loss: 0.53782][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.88it/s, Loss: 0.53783][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.92it/s, Loss: 0.53783][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.92it/s, Loss: 0.53783][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.88it/s, Loss: 0.53783][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.88it/s, Loss: 0.53786][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.84it/s, Loss: 0.53786][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.84it/s, Loss: 0.53784][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.84it/s, Loss: 0.53784][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.84it/s, Loss: 0.53784][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.92it/s, Loss: 0.53784][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.92it/s, Loss: 0.53785][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.97it/s, Loss: 0.53785][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.97it/s, Loss: 0.53784][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.89it/s, Loss: 0.53784][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.89it/s, Loss: 0.53784][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.97it/s, Loss: 0.53784][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.97it/s, Loss: 0.53785][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.94it/s, Loss: 0.53785][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.94it/s, Loss: 0.53784][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.90it/s, Loss: 0.53784][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.90it/s, Loss: 0.53784][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.89it/s, Loss: 0.53784][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.89it/s, Loss: 0.53785][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.25it/s, Loss: 0.53785][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.25it/s, Loss: 0.53785][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.44it/s, Loss: 0.53785][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.44it/s, Loss: 0.53784][A
+[AI1021 17:38:35.943804 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.48700592430405537 ,  macro_AUC : 0.49705829530298445
+I1021 17:38:35.944374 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0030241935483870967, top5_precision : 0.002217741935483871
+I1021 17:38:35.951751 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_3/config.json
+I1021 17:38:36.345190 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_3/pytorch_model.bin
+I1021 17:38:37.086270 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_3
+Epoch 0:  52%|#####1    | 16/31 [00:54<00:46,  3.13s/it, Loss: 0.63377]Epoch 0:  52%|#####1    | 16/31 [00:54<00:46,  3.13s/it, Loss: 0.62851]Epoch 0:  55%|#####4    | 17/31 [00:54<00:32,  2.29s/it, Loss: 0.62851]Epoch 0:  55%|#####4    | 17/31 [00:54<00:32,  2.29s/it, Loss: 0.62334]Epoch 0:  58%|#####8    | 18/31 [00:54<00:22,  1.70s/it, Loss: 0.62334]Epoch 0:  58%|#####8    | 18/31 [00:54<00:22,  1.70s/it, Loss: 0.61825]Epoch 0:  61%|######1   | 19/31 [00:55<00:15,  1.29s/it, Loss: 0.61825]Epoch 0:  61%|######1   | 19/31 [00:55<00:15,  1.29s/it, Loss: 0.61325]Epoch 0:  65%|######4   | 20/31 [00:55<00:11,  1.01s/it, Loss: 0.61325]Epoch 0:  65%|######4   | 20/31 [00:55<00:11,  1.01s/it, Loss: 0.60831]I1021 17:38:38.761353 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:38:38.761738 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.77it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.77it/s, Loss: 0.49465][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.75it/s, Loss: 0.49465][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.75it/s, Loss: 0.49469][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.71it/s, Loss: 0.49469][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.71it/s, Loss: 0.49465][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.79it/s, Loss: 0.49465][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.79it/s, Loss: 0.49465][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.88it/s, Loss: 0.49465][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.88it/s, Loss: 0.49465][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.85it/s, Loss: 0.49465][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.85it/s, Loss: 0.49467][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.83it/s, Loss: 0.49467][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.83it/s, Loss: 0.49464][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.80it/s, Loss: 0.49464][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.80it/s, Loss: 0.49462][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.91it/s, Loss: 0.49462][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.91it/s, Loss: 0.49458][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.87it/s, Loss: 0.49458][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.87it/s, Loss: 0.49455][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.96it/s, Loss: 0.49455][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.96it/s, Loss: 0.49452][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.95it/s, Loss: 0.49452][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.95it/s, Loss: 0.49452][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.97it/s, Loss: 0.49452][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.97it/s, Loss: 0.49455][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.02it/s, Loss: 0.49455][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.02it/s, Loss: 0.49454][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  7.00it/s, Loss: 0.49454][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  7.00it/s, Loss: 0.49454][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.06it/s, Loss: 0.49454][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.06it/s, Loss: 0.49456][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.03it/s, Loss: 0.49456][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.03it/s, Loss: 0.49457][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.01it/s, Loss: 0.49457][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.01it/s, Loss: 0.49457][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  7.02it/s, Loss: 0.49457][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  7.02it/s, Loss: 0.49456][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.32it/s, Loss: 0.49456][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.32it/s, Loss: 0.49456][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.53it/s, Loss: 0.49456][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.53it/s, Loss: 0.49455][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.68it/s, Loss: 0.49455][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.68it/s, Loss: 0.49456][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.74it/s, Loss: 0.49456][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.74it/s, Loss: 0.49456][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.78it/s, Loss: 0.49456][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.78it/s, Loss: 0.49457][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.84it/s, Loss: 0.49457][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.84it/s, Loss: 0.49457][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.91it/s, Loss: 0.49457][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.91it/s, Loss: 0.49458][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.98it/s, Loss: 0.49458][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.98it/s, Loss: 0.49458][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.94it/s, Loss: 0.49458][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.94it/s, Loss: 0.49458][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.95it/s, Loss: 0.49458][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.95it/s, Loss: 0.49458][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.97it/s, Loss: 0.49458][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.97it/s, Loss: 0.49457][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.00it/s, Loss: 0.49457][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.00it/s, Loss: 0.49457][A
+[AI1021 17:38:44.978940 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.4896878656158563 ,  macro_AUC : 0.49955597242170585
+I1021 17:38:44.979529 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.005040322580645161 ,  top3_precision : 0.0036962365591397847, top5_precision : 0.002217741935483871
+I1021 17:38:44.986166 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_4/config.json
+I1021 17:38:45.430266 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_4/pytorch_model.bin
+I1021 17:38:46.144270 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_4
+Epoch 0:  68%|######7   | 21/31 [01:03<00:30,  3.02s/it, Loss: 0.60831]Epoch 0:  68%|######7   | 21/31 [01:03<00:30,  3.02s/it, Loss: 0.60349]Epoch 0:  71%|#######   | 22/31 [01:03<00:19,  2.21s/it, Loss: 0.60349]Epoch 0:  71%|#######   | 22/31 [01:03<00:19,  2.21s/it, Loss: 0.59855]Epoch 0:  74%|#######4  | 23/31 [01:03<00:13,  1.65s/it, Loss: 0.59855]Epoch 0:  74%|#######4  | 23/31 [01:03<00:13,  1.65s/it, Loss: 0.59399]Epoch 0:  77%|#######7  | 24/31 [01:04<00:08,  1.25s/it, Loss: 0.59399]Epoch 0:  77%|#######7  | 24/31 [01:04<00:08,  1.25s/it, Loss: 0.58926]Epoch 0:  81%|########  | 25/31 [01:04<00:05,  1.02it/s, Loss: 0.58926]Epoch 0:  81%|########  | 25/31 [01:04<00:05,  1.02it/s, Loss: 0.58467]I1021 17:38:47.813112 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:38:47.813521 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.90it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.90it/s, Loss: 0.45375][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.91it/s, Loss: 0.45375][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.91it/s, Loss: 0.45395][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.91it/s, Loss: 0.45395][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.91it/s, Loss: 0.45390][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.96it/s, Loss: 0.45390][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.96it/s, Loss: 0.45382][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.00it/s, Loss: 0.45382][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.00it/s, Loss: 0.45381][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  7.01it/s, Loss: 0.45381][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  7.01it/s, Loss: 0.45377][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.96it/s, Loss: 0.45377][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.96it/s, Loss: 0.45381][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.95it/s, Loss: 0.45381][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.95it/s, Loss: 0.45381][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.97it/s, Loss: 0.45381][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.97it/s, Loss: 0.45382][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.99it/s, Loss: 0.45382][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.99it/s, Loss: 0.45382][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.92it/s, Loss: 0.45382][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.92it/s, Loss: 0.45387][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.51it/s, Loss: 0.45387][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.51it/s, Loss: 0.45382][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.58it/s, Loss: 0.45382][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.58it/s, Loss: 0.45383][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.68it/s, Loss: 0.45383][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.68it/s, Loss: 0.45384][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.75it/s, Loss: 0.45384][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.75it/s, Loss: 0.45380][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.82it/s, Loss: 0.45380][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.82it/s, Loss: 0.45380][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.91it/s, Loss: 0.45380][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.91it/s, Loss: 0.45379][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.91it/s, Loss: 0.45379][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.91it/s, Loss: 0.45379][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.99it/s, Loss: 0.45379][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.99it/s, Loss: 0.45376][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  7.02it/s, Loss: 0.45376][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  7.02it/s, Loss: 0.45376][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.98it/s, Loss: 0.45376][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.98it/s, Loss: 0.45377][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  7.01it/s, Loss: 0.45377][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  7.01it/s, Loss: 0.45376][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  7.02it/s, Loss: 0.45376][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  7.02it/s, Loss: 0.45376][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:00,  7.06it/s, Loss: 0.45376][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:00,  7.06it/s, Loss: 0.45376][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  7.01it/s, Loss: 0.45376][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  7.01it/s, Loss: 0.45377][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.96it/s, Loss: 0.45377][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.96it/s, Loss: 0.45376][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.92it/s, Loss: 0.45376][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.92it/s, Loss: 0.45375][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.45375][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.45375][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  7.02it/s, Loss: 0.45375][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  7.02it/s, Loss: 0.45373][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.99it/s, Loss: 0.45373][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.99it/s, Loss: 0.45372][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.04it/s, Loss: 0.45372][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.04it/s, Loss: 0.45373][A
+[AI1021 17:38:53.983954 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.49874544349288397 ,  macro_AUC : 0.5023198826883447
+I1021 17:38:53.984550 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0036962365591397847, top5_precision : 0.002217741935483871
+I1021 17:38:53.992220 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_5/config.json
+I1021 17:38:54.368010 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_5/pytorch_model.bin
+I1021 17:38:55.070087 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_5
+Epoch 0:  84%|########3 | 26/31 [01:12<00:14,  2.97s/it, Loss: 0.58467]Epoch 0:  84%|########3 | 26/31 [01:12<00:14,  2.97s/it, Loss: 0.58004]Epoch 0:  87%|########7 | 27/31 [01:12<00:08,  2.18s/it, Loss: 0.58004]Epoch 0:  87%|########7 | 27/31 [01:12<00:08,  2.18s/it, Loss: 0.57549]Epoch 0:  90%|######### | 28/31 [01:12<00:04,  1.62s/it, Loss: 0.57549]Epoch 0:  90%|######### | 28/31 [01:12<00:04,  1.62s/it, Loss: 0.57112]Epoch 0:  94%|#########3| 29/31 [01:13<00:02,  1.24s/it, Loss: 0.57112]Epoch 0:  94%|#########3| 29/31 [01:13<00:02,  1.24s/it, Loss: 0.56672]Epoch 0:  97%|#########6| 30/31 [01:13<00:00,  1.03it/s, Loss: 0.56672]Epoch 0:  97%|#########6| 30/31 [01:13<00:00,  1.03it/s, Loss: 0.56227]I1021 17:38:56.757733 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:38:56.758121 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.08it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.08it/s, Loss: 0.41728][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.66it/s, Loss: 0.41728][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.66it/s, Loss: 0.41748][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.70it/s, Loss: 0.41748][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.70it/s, Loss: 0.41766][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.79it/s, Loss: 0.41766][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.79it/s, Loss: 0.41765][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.82it/s, Loss: 0.41765][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.82it/s, Loss: 0.41756][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.92it/s, Loss: 0.41756][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.92it/s, Loss: 0.41752][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.99it/s, Loss: 0.41752][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.99it/s, Loss: 0.41751][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.41751][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.41752][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.02it/s, Loss: 0.41752][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.02it/s, Loss: 0.41754][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.03it/s, Loss: 0.41754][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.03it/s, Loss: 0.41756][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.98it/s, Loss: 0.41756][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.98it/s, Loss: 0.41759][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.92it/s, Loss: 0.41759][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.92it/s, Loss: 0.41759][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.97it/s, Loss: 0.41759][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.97it/s, Loss: 0.41758][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.90it/s, Loss: 0.41758][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.90it/s, Loss: 0.41757][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.88it/s, Loss: 0.41757][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.88it/s, Loss: 0.41758][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.89it/s, Loss: 0.41758][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.89it/s, Loss: 0.41758][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.85it/s, Loss: 0.41758][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.85it/s, Loss: 0.41760][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.90it/s, Loss: 0.41760][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.90it/s, Loss: 0.41759][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.95it/s, Loss: 0.41759][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.95it/s, Loss: 0.41759][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.98it/s, Loss: 0.41759][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.98it/s, Loss: 0.41760][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  7.02it/s, Loss: 0.41760][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  7.02it/s, Loss: 0.41759][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.97it/s, Loss: 0.41759][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.97it/s, Loss: 0.41760][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.90it/s, Loss: 0.41760][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.90it/s, Loss: 0.41761][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.95it/s, Loss: 0.41761][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.95it/s, Loss: 0.41761][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  7.01it/s, Loss: 0.41761][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  7.01it/s, Loss: 0.41760][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  7.01it/s, Loss: 0.41760][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  7.01it/s, Loss: 0.41763][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  7.03it/s, Loss: 0.41763][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  7.03it/s, Loss: 0.41763][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.41763][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.41765][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.35it/s, Loss: 0.41765][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.35it/s, Loss: 0.41764][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.56it/s, Loss: 0.41764][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.56it/s, Loss: 0.41766][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.72it/s, Loss: 0.41766][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.72it/s, Loss: 0.41766][A
+[AI1021 17:39:02.960457 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5059780353781969 ,  macro_AUC : 0.5035046666097003
+I1021 17:39:02.960958 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0020161290322580645, top5_precision : 0.002620967741935484
+I1021 17:39:02.968648 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_6/config.json
+I1021 17:39:03.327193 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_6/pytorch_model.bin
+I1021 17:39:04.084684 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_6
+Epoch 0: 100%|##########| 31/31 [01:21<00:00,  2.98s/it, Loss: 0.56227]Epoch 0: 100%|##########| 31/31 [01:21<00:00,  2.98s/it, Loss: 0.55807]
+Epoch 1:   0%|          | 0/31 [00:00<?, ?it/s]Epoch 1:   3%|3         | 1/31 [00:00<00:09,  3.25it/s]Epoch 1:   3%|3         | 1/31 [00:00<00:09,  3.25it/s, Loss: 0.42591]Epoch 1:   6%|6         | 2/31 [00:00<00:09,  3.17it/s, Loss: 0.42591]Epoch 1:   6%|6         | 2/31 [00:00<00:09,  3.17it/s, Loss: 0.41975]Epoch 1:  10%|9         | 3/31 [00:00<00:08,  3.12it/s, Loss: 0.41975]Epoch 1:  10%|9         | 3/31 [00:00<00:08,  3.12it/s, Loss: 0.41546]Epoch 1:  13%|#2        | 4/31 [00:01<00:08,  3.09it/s, Loss: 0.41546]Epoch 1:  13%|#2        | 4/31 [00:01<00:08,  3.09it/s, Loss: 0.41263]I1021 17:39:05.754076 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:39:05.754523 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.04it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.04it/s, Loss: 0.38622][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.00it/s, Loss: 0.38622][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.00it/s, Loss: 0.38614][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.06it/s, Loss: 0.38614][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.06it/s, Loss: 0.38610][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.04it/s, Loss: 0.38610][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.04it/s, Loss: 0.38614][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.95it/s, Loss: 0.38614][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.95it/s, Loss: 0.38618][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  7.03it/s, Loss: 0.38618][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  7.03it/s, Loss: 0.38613][A
+Evaluating:  23%|##2       | 7/31 [00:00<00:03,  7.04it/s, Loss: 0.38613][A
+Evaluating:  23%|##2       | 7/31 [00:00<00:03,  7.04it/s, Loss: 0.38613][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.98it/s, Loss: 0.38613][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.98it/s, Loss: 0.38619][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.00it/s, Loss: 0.38619][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.00it/s, Loss: 0.38621][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.00it/s, Loss: 0.38621][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.00it/s, Loss: 0.38623][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.95it/s, Loss: 0.38623][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.95it/s, Loss: 0.38618][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  7.01it/s, Loss: 0.38618][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  7.01it/s, Loss: 0.38618][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.87it/s, Loss: 0.38618][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.87it/s, Loss: 0.38619][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.93it/s, Loss: 0.38619][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.93it/s, Loss: 0.38616][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.95it/s, Loss: 0.38616][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.95it/s, Loss: 0.38616][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.97it/s, Loss: 0.38616][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.97it/s, Loss: 0.38618][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.99it/s, Loss: 0.38618][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.99it/s, Loss: 0.38618][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.03it/s, Loss: 0.38618][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.03it/s, Loss: 0.38616][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.98it/s, Loss: 0.38616][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.98it/s, Loss: 0.38616][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.96it/s, Loss: 0.38616][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.96it/s, Loss: 0.38617][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.57it/s, Loss: 0.38617][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.57it/s, Loss: 0.38618][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.67it/s, Loss: 0.38618][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.67it/s, Loss: 0.38620][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.76it/s, Loss: 0.38620][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.76it/s, Loss: 0.38619][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.83it/s, Loss: 0.38619][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.83it/s, Loss: 0.38616][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.82it/s, Loss: 0.38616][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.82it/s, Loss: 0.38616][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.83it/s, Loss: 0.38616][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.83it/s, Loss: 0.38616][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.38616][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.38616][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.38616][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.38615][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.92it/s, Loss: 0.38615][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.92it/s, Loss: 0.38616][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.94it/s, Loss: 0.38616][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.94it/s, Loss: 0.38616][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.86it/s, Loss: 0.38616][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.86it/s, Loss: 0.38617][A
+[AI1021 17:39:11.917327 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5097702406583448 ,  macro_AUC : 0.5042775579152998
+I1021 17:39:11.917852 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0010080645161290322, top5_precision : 0.004435483870967742
+I1021 17:39:11.925687 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_7/config.json
+I1021 17:39:12.324113 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_7/pytorch_model.bin
+I1021 17:39:13.042418 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_7
+Epoch 1:  16%|#6        | 5/31 [00:08<01:05,  2.51s/it, Loss: 0.41263]Epoch 1:  16%|#6        | 5/31 [00:08<01:05,  2.51s/it, Loss: 0.40943]Epoch 1:  19%|#9        | 6/31 [00:09<00:46,  1.86s/it, Loss: 0.40943]Epoch 1:  19%|#9        | 6/31 [00:09<00:46,  1.86s/it, Loss: 0.40616]Epoch 1:  23%|##2       | 7/31 [00:09<00:33,  1.40s/it, Loss: 0.40616]Epoch 1:  23%|##2       | 7/31 [00:09<00:33,  1.40s/it, Loss: 0.40295]Epoch 1:  26%|##5       | 8/31 [00:09<00:24,  1.08s/it, Loss: 0.40295]Epoch 1:  26%|##5       | 8/31 [00:09<00:24,  1.08s/it, Loss: 0.40001]Epoch 1:  29%|##9       | 9/31 [00:10<00:18,  1.17it/s, Loss: 0.40001]Epoch 1:  29%|##9       | 9/31 [00:10<00:18,  1.17it/s, Loss: 0.39663]I1021 17:39:14.713294 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:39:14.713743 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.88it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.88it/s, Loss: 0.35929][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.92it/s, Loss: 0.35929][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.92it/s, Loss: 0.35946][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.98it/s, Loss: 0.35946][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.98it/s, Loss: 0.35951][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.05it/s, Loss: 0.35951][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.05it/s, Loss: 0.35939][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.07it/s, Loss: 0.35939][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.07it/s, Loss: 0.35941][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.98it/s, Loss: 0.35941][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.98it/s, Loss: 0.35928][A
+Evaluating:  23%|##2       | 7/31 [00:00<00:03,  6.96it/s, Loss: 0.35928][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.96it/s, Loss: 0.35926][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.95it/s, Loss: 0.35926][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.95it/s, Loss: 0.35927][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.36it/s, Loss: 0.35927][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.36it/s, Loss: 0.35925][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.50it/s, Loss: 0.35925][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.50it/s, Loss: 0.35921][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.61it/s, Loss: 0.35921][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.61it/s, Loss: 0.35917][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.76it/s, Loss: 0.35917][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.76it/s, Loss: 0.35918][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.84it/s, Loss: 0.35918][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.84it/s, Loss: 0.35914][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.88it/s, Loss: 0.35914][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.88it/s, Loss: 0.35912][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.81it/s, Loss: 0.35912][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.81it/s, Loss: 0.35911][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.87it/s, Loss: 0.35911][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.87it/s, Loss: 0.35909][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.87it/s, Loss: 0.35909][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.87it/s, Loss: 0.35908][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.88it/s, Loss: 0.35908][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.88it/s, Loss: 0.35907][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.92it/s, Loss: 0.35907][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.92it/s, Loss: 0.35904][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.90it/s, Loss: 0.35904][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.90it/s, Loss: 0.35906][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.96it/s, Loss: 0.35906][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.96it/s, Loss: 0.35907][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.99it/s, Loss: 0.35907][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.99it/s, Loss: 0.35904][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  7.05it/s, Loss: 0.35904][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  7.05it/s, Loss: 0.35905][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:00,  7.04it/s, Loss: 0.35905][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:00,  7.04it/s, Loss: 0.35904][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.99it/s, Loss: 0.35904][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.99it/s, Loss: 0.35904][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.94it/s, Loss: 0.35904][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.94it/s, Loss: 0.35904][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.90it/s, Loss: 0.35904][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.90it/s, Loss: 0.35903][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.91it/s, Loss: 0.35903][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.91it/s, Loss: 0.35904][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.92it/s, Loss: 0.35904][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.92it/s, Loss: 0.35905][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.82it/s, Loss: 0.35905][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.82it/s, Loss: 0.35907][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.90it/s, Loss: 0.35907][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.90it/s, Loss: 0.35909][A
+[AI1021 17:39:20.891983 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5141317452951338 ,  macro_AUC : 0.5042699091244948
+I1021 17:39:20.892556 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0010080645161290322, top5_precision : 0.002217741935483871
+I1021 17:39:20.899872 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_8/config.json
+I1021 17:39:21.278546 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_8/pytorch_model.bin
+I1021 17:39:22.002652 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_8
+Epoch 1:  32%|###2      | 10/31 [00:17<01:00,  2.89s/it, Loss: 0.39663]Epoch 1:  32%|###2      | 10/31 [00:17<01:00,  2.89s/it, Loss: 0.39346]Epoch 1:  35%|###5      | 11/31 [00:18<00:42,  2.12s/it, Loss: 0.39346]Epoch 1:  35%|###5      | 11/31 [00:18<00:42,  2.12s/it, Loss: 0.39033]Epoch 1:  39%|###8      | 12/31 [00:18<00:30,  1.59s/it, Loss: 0.39033]Epoch 1:  39%|###8      | 12/31 [00:18<00:30,  1.59s/it, Loss: 0.38744]Epoch 1:  42%|####1     | 13/31 [00:18<00:21,  1.21s/it, Loss: 0.38744]Epoch 1:  42%|####1     | 13/31 [00:18<00:21,  1.21s/it, Loss: 0.38469]Epoch 1:  45%|####5     | 14/31 [00:19<00:16,  1.06it/s, Loss: 0.38469]Epoch 1:  45%|####5     | 14/31 [00:19<00:16,  1.06it/s, Loss: 0.38193]I1021 17:39:23.671925 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:39:23.672377 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:05,  5.74it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:05,  5.74it/s, Loss: 0.33562][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.00it/s, Loss: 0.33562][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.00it/s, Loss: 0.33550][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.23it/s, Loss: 0.33550][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.23it/s, Loss: 0.33558][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:04,  6.39it/s, Loss: 0.33558][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:04,  6.39it/s, Loss: 0.33565][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.54it/s, Loss: 0.33565][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.54it/s, Loss: 0.33567][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.65it/s, Loss: 0.33567][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.65it/s, Loss: 0.33571][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.70it/s, Loss: 0.33571][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.70it/s, Loss: 0.33583][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.84it/s, Loss: 0.33583][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.84it/s, Loss: 0.33588][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.80it/s, Loss: 0.33588][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.80it/s, Loss: 0.33589][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.82it/s, Loss: 0.33589][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.82it/s, Loss: 0.33590][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.89it/s, Loss: 0.33590][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.89it/s, Loss: 0.33589][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.88it/s, Loss: 0.33589][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.88it/s, Loss: 0.33590][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.87it/s, Loss: 0.33590][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.87it/s, Loss: 0.33585][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.89it/s, Loss: 0.33585][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.89it/s, Loss: 0.33591][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.88it/s, Loss: 0.33591][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.88it/s, Loss: 0.33592][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.90it/s, Loss: 0.33592][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.90it/s, Loss: 0.33593][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.87it/s, Loss: 0.33593][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.87it/s, Loss: 0.33599][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.85it/s, Loss: 0.33599][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.85it/s, Loss: 0.33596][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.90it/s, Loss: 0.33596][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.90it/s, Loss: 0.33595][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.95it/s, Loss: 0.33595][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.95it/s, Loss: 0.33594][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.93it/s, Loss: 0.33594][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.93it/s, Loss: 0.33594][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.33594][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.33598][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.89it/s, Loss: 0.33598][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.89it/s, Loss: 0.33599][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.95it/s, Loss: 0.33599][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.95it/s, Loss: 0.33598][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.96it/s, Loss: 0.33598][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.96it/s, Loss: 0.33596][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  7.01it/s, Loss: 0.33596][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  7.01it/s, Loss: 0.33597][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  7.02it/s, Loss: 0.33597][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  7.02it/s, Loss: 0.33598][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  7.00it/s, Loss: 0.33598][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  7.00it/s, Loss: 0.33600][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.62it/s, Loss: 0.33600][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.62it/s, Loss: 0.33599][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.72it/s, Loss: 0.33599][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.72it/s, Loss: 0.33598][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.77it/s, Loss: 0.33598][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.77it/s, Loss: 0.33599][A
+[AI1021 17:39:29.873982 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5170793968705018 ,  macro_AUC : 0.5043574935695767
+I1021 17:39:29.874540 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0010080645161290322, top5_precision : 0.0018145161290322581
+I1021 17:39:29.882463 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_9/config.json
+I1021 17:39:30.261214 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_9/pytorch_model.bin
+I1021 17:39:31.012860 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_9
+Epoch 1:  48%|####8     | 15/31 [00:26<00:47,  2.97s/it, Loss: 0.38193]Epoch 1:  48%|####8     | 15/31 [00:26<00:47,  2.97s/it, Loss: 0.37930]Epoch 1:  52%|#####1    | 16/31 [00:27<00:32,  2.18s/it, Loss: 0.37930]Epoch 1:  52%|#####1    | 16/31 [00:27<00:32,  2.18s/it, Loss: 0.37668]Epoch 1:  55%|#####4    | 17/31 [00:27<00:22,  1.62s/it, Loss: 0.37668]Epoch 1:  55%|#####4    | 17/31 [00:27<00:22,  1.62s/it, Loss: 0.37421]Epoch 1:  58%|#####8    | 18/31 [00:27<00:16,  1.24s/it, Loss: 0.37421]Epoch 1:  58%|#####8    | 18/31 [00:27<00:16,  1.24s/it, Loss: 0.37187]Epoch 1:  61%|######1   | 19/31 [00:28<00:11,  1.03it/s, Loss: 0.37187]Epoch 1:  61%|######1   | 19/31 [00:28<00:11,  1.03it/s, Loss: 0.36960]I1021 17:39:32.703277 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:39:32.703657 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.79it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.79it/s, Loss: 0.31670][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.80it/s, Loss: 0.31670][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.80it/s, Loss: 0.31642][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.84it/s, Loss: 0.31642][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.84it/s, Loss: 0.31642][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.90it/s, Loss: 0.31642][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.90it/s, Loss: 0.31634][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.90it/s, Loss: 0.31634][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.90it/s, Loss: 0.31659][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.92it/s, Loss: 0.31659][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.92it/s, Loss: 0.31666][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.93it/s, Loss: 0.31666][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.93it/s, Loss: 0.31661][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.31661][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.31664][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.96it/s, Loss: 0.31664][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.96it/s, Loss: 0.31658][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.94it/s, Loss: 0.31658][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.94it/s, Loss: 0.31658][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.95it/s, Loss: 0.31658][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.95it/s, Loss: 0.31657][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.31657][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.31664][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.97it/s, Loss: 0.31664][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.97it/s, Loss: 0.31663][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.01it/s, Loss: 0.31663][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.01it/s, Loss: 0.31663][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.93it/s, Loss: 0.31663][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.93it/s, Loss: 0.31661][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.90it/s, Loss: 0.31661][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.90it/s, Loss: 0.31659][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.84it/s, Loss: 0.31659][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.84it/s, Loss: 0.31657][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.83it/s, Loss: 0.31657][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.83it/s, Loss: 0.31657][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.50it/s, Loss: 0.31657][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.50it/s, Loss: 0.31655][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.66it/s, Loss: 0.31655][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.66it/s, Loss: 0.31657][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.73it/s, Loss: 0.31657][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.73it/s, Loss: 0.31655][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.82it/s, Loss: 0.31655][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.82it/s, Loss: 0.31657][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.83it/s, Loss: 0.31657][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.83it/s, Loss: 0.31657][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.87it/s, Loss: 0.31657][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.87it/s, Loss: 0.31656][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.31656][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.31655][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.96it/s, Loss: 0.31655][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.96it/s, Loss: 0.31656][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.96it/s, Loss: 0.31656][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.96it/s, Loss: 0.31656][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.90it/s, Loss: 0.31656][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.90it/s, Loss: 0.31657][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.86it/s, Loss: 0.31657][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.86it/s, Loss: 0.31658][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.92it/s, Loss: 0.31658][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.92it/s, Loss: 0.31660][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.93it/s, Loss: 0.31660][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.93it/s, Loss: 0.31664][A
+[AI1021 17:39:38.859640 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5197090143725744 ,  macro_AUC : 0.5031396016299012
+I1021 17:39:38.860209 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0010080645161290322, top5_precision : 0.0018145161290322581
+I1021 17:39:38.868758 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_10/config.json
+I1021 17:39:39.246822 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_10/pytorch_model.bin
+I1021 17:39:39.969266 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_10
+Epoch 1:  65%|######4   | 20/31 [00:35<00:32,  2.96s/it, Loss: 0.36960]Epoch 1:  65%|######4   | 20/31 [00:35<00:32,  2.96s/it, Loss: 0.36737]Epoch 1:  68%|######7   | 21/31 [00:36<00:21,  2.18s/it, Loss: 0.36737]Epoch 1:  68%|######7   | 21/31 [00:36<00:21,  2.18s/it, Loss: 0.36505]Epoch 1:  71%|#######   | 22/31 [00:36<00:14,  1.63s/it, Loss: 0.36505]Epoch 1:  71%|#######   | 22/31 [00:36<00:14,  1.63s/it, Loss: 0.36297]Epoch 1:  74%|#######4  | 23/31 [00:36<00:09,  1.24s/it, Loss: 0.36297]Epoch 1:  74%|#######4  | 23/31 [00:36<00:09,  1.24s/it, Loss: 0.36072]Epoch 1:  77%|#######7  | 24/31 [00:37<00:06,  1.03it/s, Loss: 0.36072]Epoch 1:  77%|#######7  | 24/31 [00:37<00:06,  1.03it/s, Loss: 0.35862]I1021 17:39:41.669746 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:39:41.670154 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.19it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.19it/s, Loss: 0.30137][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.08it/s, Loss: 0.30137][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.08it/s, Loss: 0.30105][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.01it/s, Loss: 0.30105][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.01it/s, Loss: 0.30102][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.30102][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.30102][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.02it/s, Loss: 0.30102][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.02it/s, Loss: 0.30092][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.99it/s, Loss: 0.30092][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.99it/s, Loss: 0.30074][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  7.03it/s, Loss: 0.30074][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  7.03it/s, Loss: 0.30081][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  7.04it/s, Loss: 0.30081][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  7.04it/s, Loss: 0.30074][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.07it/s, Loss: 0.30074][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.07it/s, Loss: 0.30074][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.28it/s, Loss: 0.30074][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.28it/s, Loss: 0.30070][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.49it/s, Loss: 0.30070][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.49it/s, Loss: 0.30072][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.65it/s, Loss: 0.30072][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.65it/s, Loss: 0.30070][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.70it/s, Loss: 0.30070][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.70it/s, Loss: 0.30071][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.83it/s, Loss: 0.30071][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.83it/s, Loss: 0.30069][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.88it/s, Loss: 0.30069][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.88it/s, Loss: 0.30071][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.88it/s, Loss: 0.30071][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.88it/s, Loss: 0.30072][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.85it/s, Loss: 0.30072][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.85it/s, Loss: 0.30070][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.91it/s, Loss: 0.30070][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.91it/s, Loss: 0.30067][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.86it/s, Loss: 0.30067][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.86it/s, Loss: 0.30068][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.88it/s, Loss: 0.30068][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.88it/s, Loss: 0.30068][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.96it/s, Loss: 0.30068][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.96it/s, Loss: 0.30067][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.30067][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.90it/s, Loss: 0.30070][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.91it/s, Loss: 0.30070][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.91it/s, Loss: 0.30068][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.87it/s, Loss: 0.30068][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.87it/s, Loss: 0.30072][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.95it/s, Loss: 0.30072][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.95it/s, Loss: 0.30070][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.90it/s, Loss: 0.30070][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.90it/s, Loss: 0.30071][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.30071][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.30070][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.30070][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.97it/s, Loss: 0.30071][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.97it/s, Loss: 0.30071][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.97it/s, Loss: 0.30069][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.88it/s, Loss: 0.30069][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.88it/s, Loss: 0.30070][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.92it/s, Loss: 0.30070][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.92it/s, Loss: 0.30069][A
+[AI1021 17:39:47.837762 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5212560541038689 ,  macro_AUC : 0.502572734078936
+I1021 17:39:47.838254 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0010080645161290322, top5_precision : 0.001411290322580645
+I1021 17:39:47.846035 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_11/config.json
+I1021 17:39:48.222280 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_11/pytorch_model.bin
+I1021 17:39:48.935720 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_11
+Epoch 1:  81%|########  | 25/31 [00:44<00:17,  2.96s/it, Loss: 0.35862]Epoch 1:  81%|########  | 25/31 [00:44<00:17,  2.96s/it, Loss: 0.35658]Epoch 1:  84%|########3 | 26/31 [00:45<00:10,  2.17s/it, Loss: 0.35658]Epoch 1:  84%|########3 | 26/31 [00:45<00:10,  2.17s/it, Loss: 0.35447]Epoch 1:  87%|########7 | 27/31 [00:45<00:06,  1.62s/it, Loss: 0.35447]Epoch 1:  87%|########7 | 27/31 [00:45<00:06,  1.62s/it, Loss: 0.35241]Epoch 1:  90%|######### | 28/31 [00:45<00:03,  1.23s/it, Loss: 0.35241]Epoch 1:  90%|######### | 28/31 [00:45<00:03,  1.23s/it, Loss: 0.35045]Epoch 1:  94%|#########3| 29/31 [00:46<00:01,  1.02it/s, Loss: 0.35045]Epoch 1:  94%|#########3| 29/31 [00:46<00:01,  1.02it/s, Loss: 0.34852]I1021 17:39:50.656193 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:39:50.656584 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.05it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.05it/s, Loss: 0.28725][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.04it/s, Loss: 0.28725][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.04it/s, Loss: 0.28755][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.97it/s, Loss: 0.28755][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.97it/s, Loss: 0.28757][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.81it/s, Loss: 0.28757][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.81it/s, Loss: 0.28776][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.85it/s, Loss: 0.28776][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.85it/s, Loss: 0.28774][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.79it/s, Loss: 0.28774][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.79it/s, Loss: 0.28768][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.88it/s, Loss: 0.28768][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.88it/s, Loss: 0.28773][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.93it/s, Loss: 0.28773][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.93it/s, Loss: 0.28765][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.84it/s, Loss: 0.28765][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.84it/s, Loss: 0.28771][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.86it/s, Loss: 0.28771][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.86it/s, Loss: 0.28778][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.89it/s, Loss: 0.28778][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.89it/s, Loss: 0.28777][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.92it/s, Loss: 0.28777][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.92it/s, Loss: 0.28777][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.99it/s, Loss: 0.28777][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.99it/s, Loss: 0.28777][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.04it/s, Loss: 0.28777][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.04it/s, Loss: 0.28773][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  7.03it/s, Loss: 0.28773][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  7.03it/s, Loss: 0.28773][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.07it/s, Loss: 0.28773][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.07it/s, Loss: 0.28772][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.03it/s, Loss: 0.28772][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.03it/s, Loss: 0.28770][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.07it/s, Loss: 0.28770][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.07it/s, Loss: 0.28769][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  7.11it/s, Loss: 0.28769][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  7.11it/s, Loss: 0.28772][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  7.04it/s, Loss: 0.28772][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  7.04it/s, Loss: 0.28769][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.95it/s, Loss: 0.28769][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.95it/s, Loss: 0.28769][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.93it/s, Loss: 0.28769][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.93it/s, Loss: 0.28769][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.93it/s, Loss: 0.28769][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.93it/s, Loss: 0.28770][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.94it/s, Loss: 0.28770][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.94it/s, Loss: 0.28770][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.91it/s, Loss: 0.28770][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.91it/s, Loss: 0.28768][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.99it/s, Loss: 0.28768][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.99it/s, Loss: 0.28768][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  7.00it/s, Loss: 0.28768][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  7.00it/s, Loss: 0.28765][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.93it/s, Loss: 0.28765][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.93it/s, Loss: 0.28763][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.27it/s, Loss: 0.28763][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.27it/s, Loss: 0.28765][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.47it/s, Loss: 0.28765][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.47it/s, Loss: 0.28764][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.61it/s, Loss: 0.28764][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.61it/s, Loss: 0.28764][A
+[AI1021 17:39:56.822966 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.523387236918792 ,  macro_AUC : 0.5023454379853616
+I1021 17:39:56.823450 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0016801075268817205, top5_precision : 0.001411290322580645
+I1021 17:39:56.838856 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_12/config.json
+I1021 17:39:57.233297 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_12/pytorch_model.bin
+I1021 17:39:57.987962 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_12
+Epoch 1:  97%|#########6| 30/31 [00:53<00:02,  2.99s/it, Loss: 0.34852]Epoch 1:  97%|#########6| 30/31 [00:53<00:02,  2.99s/it, Loss: 0.34668]Epoch 1: 100%|##########| 31/31 [00:54<00:00,  2.19s/it, Loss: 0.34668]Epoch 1: 100%|##########| 31/31 [00:54<00:00,  2.19s/it, Loss: 0.34491]
+Epoch 2:   0%|          | 0/31 [00:00<?, ?it/s]Epoch 2:   3%|3         | 1/31 [00:00<00:09,  3.25it/s]Epoch 2:   3%|3         | 1/31 [00:00<00:09,  3.25it/s, Loss: 0.28617]Epoch 2:   6%|6         | 2/31 [00:00<00:09,  3.17it/s, Loss: 0.28617]Epoch 2:   6%|6         | 2/31 [00:00<00:09,  3.17it/s, Loss: 0.28500]Epoch 2:  10%|9         | 3/31 [00:00<00:09,  3.11it/s, Loss: 0.28500]Epoch 2:  10%|9         | 3/31 [00:00<00:09,  3.11it/s, Loss: 0.28378]I1021 17:39:59.667374 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:39:59.667753 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.20it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.20it/s, Loss: 0.27718][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.03it/s, Loss: 0.27718][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.03it/s, Loss: 0.27699][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.01it/s, Loss: 0.27699][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.01it/s, Loss: 0.27729][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.27729][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.27713][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.97it/s, Loss: 0.27713][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.97it/s, Loss: 0.27712][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.95it/s, Loss: 0.27712][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.95it/s, Loss: 0.27705][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.99it/s, Loss: 0.27705][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.99it/s, Loss: 0.27706][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.27706][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.99it/s, Loss: 0.27709][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.04it/s, Loss: 0.27709][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.04it/s, Loss: 0.27699][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.07it/s, Loss: 0.27699][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.07it/s, Loss: 0.27696][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  7.03it/s, Loss: 0.27696][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  7.03it/s, Loss: 0.27706][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.27706][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.27704][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  7.03it/s, Loss: 0.27704][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  7.03it/s, Loss: 0.27700][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.98it/s, Loss: 0.27700][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.98it/s, Loss: 0.27694][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.99it/s, Loss: 0.27694][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.99it/s, Loss: 0.27691][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.00it/s, Loss: 0.27691][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.00it/s, Loss: 0.27692][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.02it/s, Loss: 0.27692][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.02it/s, Loss: 0.27690][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.03it/s, Loss: 0.27690][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.03it/s, Loss: 0.27688][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.97it/s, Loss: 0.27688][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.97it/s, Loss: 0.27689][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.99it/s, Loss: 0.27689][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.99it/s, Loss: 0.27689][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.62it/s, Loss: 0.27689][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.62it/s, Loss: 0.27688][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.65it/s, Loss: 0.27688][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.65it/s, Loss: 0.27685][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.79it/s, Loss: 0.27685][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.79it/s, Loss: 0.27687][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.84it/s, Loss: 0.27687][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.84it/s, Loss: 0.27690][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.88it/s, Loss: 0.27690][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.88it/s, Loss: 0.27689][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.86it/s, Loss: 0.27689][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.86it/s, Loss: 0.27691][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.27691][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.27689][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.84it/s, Loss: 0.27689][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.84it/s, Loss: 0.27687][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.82it/s, Loss: 0.27687][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.82it/s, Loss: 0.27689][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.91it/s, Loss: 0.27689][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.91it/s, Loss: 0.27689][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.96it/s, Loss: 0.27689][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.96it/s, Loss: 0.27689][A
+[AI1021 17:40:05.784535 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5278767333763861 ,  macro_AUC : 0.5021086728482722
+I1021 17:40:05.785122 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0016801075268817205, top5_precision : 0.004032258064516129
+I1021 17:40:05.793461 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_13/config.json
+I1021 17:40:06.157961 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_13/pytorch_model.bin
+I1021 17:40:06.859023 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_13
+Epoch 2:  13%|#2        | 4/31 [00:08<01:07,  2.48s/it, Loss: 0.28378]Epoch 2:  13%|#2        | 4/31 [00:08<01:07,  2.48s/it, Loss: 0.28332]Epoch 2:  16%|#6        | 5/31 [00:08<00:47,  1.84s/it, Loss: 0.28332]Epoch 2:  16%|#6        | 5/31 [00:08<00:47,  1.84s/it, Loss: 0.28262]Epoch 2:  19%|#9        | 6/31 [00:09<00:34,  1.39s/it, Loss: 0.28262]Epoch 2:  19%|#9        | 6/31 [00:09<00:34,  1.39s/it, Loss: 0.28225]Epoch 2:  23%|##2       | 7/31 [00:09<00:25,  1.07s/it, Loss: 0.28225]Epoch 2:  23%|##2       | 7/31 [00:09<00:25,  1.07s/it, Loss: 0.28134]Epoch 2:  26%|##5       | 8/31 [00:09<00:19,  1.18it/s, Loss: 0.28134]Epoch 2:  26%|##5       | 8/31 [00:09<00:19,  1.18it/s, Loss: 0.28069]I1021 17:40:08.529743 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:40:08.530159 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.66it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.66it/s, Loss: 0.26860][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.78it/s, Loss: 0.26860][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.78it/s, Loss: 0.26909][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.89it/s, Loss: 0.26909][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.89it/s, Loss: 0.26867][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.91it/s, Loss: 0.26867][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.91it/s, Loss: 0.26853][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.91it/s, Loss: 0.26853][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.91it/s, Loss: 0.26852][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.80it/s, Loss: 0.26852][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.80it/s, Loss: 0.26854][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.77it/s, Loss: 0.26854][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.77it/s, Loss: 0.26846][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.82it/s, Loss: 0.26846][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.82it/s, Loss: 0.26844][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.25it/s, Loss: 0.26844][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.25it/s, Loss: 0.26849][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.45it/s, Loss: 0.26849][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.45it/s, Loss: 0.26847][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.59it/s, Loss: 0.26847][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.59it/s, Loss: 0.26853][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.66it/s, Loss: 0.26853][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.66it/s, Loss: 0.26857][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.80it/s, Loss: 0.26857][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.80it/s, Loss: 0.26859][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.87it/s, Loss: 0.26859][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.87it/s, Loss: 0.26857][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.95it/s, Loss: 0.26857][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.95it/s, Loss: 0.26853][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.00it/s, Loss: 0.26853][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  7.00it/s, Loss: 0.26852][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.91it/s, Loss: 0.26852][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.91it/s, Loss: 0.26853][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.91it/s, Loss: 0.26853][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.91it/s, Loss: 0.26855][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.96it/s, Loss: 0.26855][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.96it/s, Loss: 0.26855][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.84it/s, Loss: 0.26855][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.84it/s, Loss: 0.26852][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.92it/s, Loss: 0.26852][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.92it/s, Loss: 0.26853][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  7.00it/s, Loss: 0.26853][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  7.00it/s, Loss: 0.26850][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.99it/s, Loss: 0.26850][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.99it/s, Loss: 0.26849][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.98it/s, Loss: 0.26849][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.98it/s, Loss: 0.26848][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  7.01it/s, Loss: 0.26848][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  7.01it/s, Loss: 0.26847][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.87it/s, Loss: 0.26847][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.87it/s, Loss: 0.26852][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.89it/s, Loss: 0.26852][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.89it/s, Loss: 0.26851][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.95it/s, Loss: 0.26851][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.95it/s, Loss: 0.26851][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.98it/s, Loss: 0.26851][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.98it/s, Loss: 0.26850][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.99it/s, Loss: 0.26850][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.99it/s, Loss: 0.26847][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.02it/s, Loss: 0.26847][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  7.02it/s, Loss: 0.26845][A
+[AI1021 17:40:14.680237 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.529933951911679 ,  macro_AUC : 0.5020563053518942
+I1021 17:40:14.680763 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0016801075268817205, top5_precision : 0.004838709677419355
+I1021 17:40:14.687829 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_14/config.json
+I1021 17:40:15.070404 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_14/pytorch_model.bin
+I1021 17:40:15.781768 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_14
+Epoch 2:  29%|##9       | 9/31 [00:17<01:03,  2.87s/it, Loss: 0.28069]Epoch 2:  29%|##9       | 9/31 [00:17<01:03,  2.87s/it, Loss: 0.27999]Epoch 2:  32%|###2      | 10/31 [00:17<00:44,  2.11s/it, Loss: 0.27999]Epoch 2:  32%|###2      | 10/31 [00:17<00:44,  2.11s/it, Loss: 0.27941]Epoch 2:  35%|###5      | 11/31 [00:18<00:31,  1.58s/it, Loss: 0.27941]Epoch 2:  35%|###5      | 11/31 [00:18<00:31,  1.58s/it, Loss: 0.27856]Epoch 2:  39%|###8      | 12/31 [00:18<00:22,  1.20s/it, Loss: 0.27856]Epoch 2:  39%|###8      | 12/31 [00:18<00:22,  1.20s/it, Loss: 0.27789]Epoch 2:  42%|####1     | 13/31 [00:18<00:16,  1.06it/s, Loss: 0.27789]Epoch 2:  42%|####1     | 13/31 [00:18<00:16,  1.06it/s, Loss: 0.27712]I1021 17:40:17.460980 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:40:17.461363 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:05,  5.80it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:05,  5.80it/s, Loss: 0.26140][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.11it/s, Loss: 0.26140][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.11it/s, Loss: 0.26236][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.36it/s, Loss: 0.26236][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.36it/s, Loss: 0.26244][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:04,  6.51it/s, Loss: 0.26244][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:04,  6.51it/s, Loss: 0.26227][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.65it/s, Loss: 0.26227][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.65it/s, Loss: 0.26214][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.76it/s, Loss: 0.26214][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.76it/s, Loss: 0.26209][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.81it/s, Loss: 0.26209][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.81it/s, Loss: 0.26218][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.86it/s, Loss: 0.26218][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.86it/s, Loss: 0.26219][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.90it/s, Loss: 0.26219][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.90it/s, Loss: 0.26212][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.95it/s, Loss: 0.26212][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.95it/s, Loss: 0.26211][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.92it/s, Loss: 0.26211][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.92it/s, Loss: 0.26204][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.98it/s, Loss: 0.26204][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.98it/s, Loss: 0.26203][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.98it/s, Loss: 0.26203][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.98it/s, Loss: 0.26204][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.01it/s, Loss: 0.26204][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  7.01it/s, Loss: 0.26204][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.99it/s, Loss: 0.26204][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.99it/s, Loss: 0.26204][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.97it/s, Loss: 0.26204][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.97it/s, Loss: 0.26205][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.02it/s, Loss: 0.26205][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:01,  7.02it/s, Loss: 0.26208][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.96it/s, Loss: 0.26208][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.96it/s, Loss: 0.26208][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.92it/s, Loss: 0.26208][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.92it/s, Loss: 0.26209][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.90it/s, Loss: 0.26209][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.90it/s, Loss: 0.26207][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.95it/s, Loss: 0.26207][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.95it/s, Loss: 0.26206][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.94it/s, Loss: 0.26206][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.94it/s, Loss: 0.26204][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.86it/s, Loss: 0.26204][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.86it/s, Loss: 0.26206][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.91it/s, Loss: 0.26206][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.91it/s, Loss: 0.26207][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.26207][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.26209][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  7.01it/s, Loss: 0.26209][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  7.01it/s, Loss: 0.26207][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.26207][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.91it/s, Loss: 0.26206][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.86it/s, Loss: 0.26206][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.86it/s, Loss: 0.26203][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.54it/s, Loss: 0.26203][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.54it/s, Loss: 0.26202][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.70it/s, Loss: 0.26202][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.70it/s, Loss: 0.26204][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.79it/s, Loss: 0.26204][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.79it/s, Loss: 0.26203][A
+[AI1021 17:40:23.606762 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5311289820859555 ,  macro_AUC : 0.5028915419087948
+I1021 17:40:23.607257 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0016801075268817205, top5_precision : 0.004838709677419355
+I1021 17:40:23.613520 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_15/config.json
+I1021 17:40:24.000502 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_15/pytorch_model.bin
+I1021 17:40:24.704163 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_15
+Epoch 2:  45%|####5     | 14/31 [00:26<00:49,  2.94s/it, Loss: 0.27712]Epoch 2:  45%|####5     | 14/31 [00:26<00:49,  2.94s/it, Loss: 0.27632]Epoch 2:  48%|####8     | 15/31 [00:26<00:34,  2.16s/it, Loss: 0.27632]Epoch 2:  48%|####8     | 15/31 [00:26<00:34,  2.16s/it, Loss: 0.27552]Epoch 2:  52%|#####1    | 16/31 [00:27<00:24,  1.61s/it, Loss: 0.27552]Epoch 2:  52%|#####1    | 16/31 [00:27<00:24,  1.61s/it, Loss: 0.27487]Epoch 2:  55%|#####4    | 17/31 [00:27<00:17,  1.23s/it, Loss: 0.27487]Epoch 2:  55%|#####4    | 17/31 [00:27<00:17,  1.23s/it, Loss: 0.27428]Epoch 2:  58%|#####8    | 18/31 [00:27<00:12,  1.04it/s, Loss: 0.27428]Epoch 2:  58%|#####8    | 18/31 [00:27<00:12,  1.04it/s, Loss: 0.27363]I1021 17:40:26.383598 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:40:26.384001 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.97it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.97it/s, Loss: 0.25732][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.00it/s, Loss: 0.25732][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.00it/s, Loss: 0.25712][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.97it/s, Loss: 0.25712][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.97it/s, Loss: 0.25689][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.25689][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.25702][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.03it/s, Loss: 0.25702][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  7.03it/s, Loss: 0.25713][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  7.06it/s, Loss: 0.25713][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  7.06it/s, Loss: 0.25710][A
+Evaluating:  23%|##2       | 7/31 [00:00<00:03,  7.00it/s, Loss: 0.25710][A
+Evaluating:  23%|##2       | 7/31 [00:00<00:03,  7.00it/s, Loss: 0.25711][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.96it/s, Loss: 0.25711][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.96it/s, Loss: 0.25715][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.94it/s, Loss: 0.25715][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.94it/s, Loss: 0.25715][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.96it/s, Loss: 0.25715][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.96it/s, Loss: 0.25706][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.99it/s, Loss: 0.25706][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.99it/s, Loss: 0.25709][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  7.02it/s, Loss: 0.25709][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  7.02it/s, Loss: 0.25711][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  7.02it/s, Loss: 0.25711][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  7.02it/s, Loss: 0.25712][A
+Evaluating:  45%|####5     | 14/31 [00:01<00:02,  7.03it/s, Loss: 0.25712][A
+Evaluating:  45%|####5     | 14/31 [00:01<00:02,  7.03it/s, Loss: 0.25711][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.92it/s, Loss: 0.25711][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.92it/s, Loss: 0.25711][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.93it/s, Loss: 0.25711][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.93it/s, Loss: 0.25716][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.99it/s, Loss: 0.25716][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.99it/s, Loss: 0.25716][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.02it/s, Loss: 0.25716][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  7.02it/s, Loss: 0.25712][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.66it/s, Loss: 0.25712][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.66it/s, Loss: 0.25713][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.76it/s, Loss: 0.25713][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.76it/s, Loss: 0.25722][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.81it/s, Loss: 0.25722][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.81it/s, Loss: 0.25726][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.83it/s, Loss: 0.25726][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.83it/s, Loss: 0.25727][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.90it/s, Loss: 0.25727][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.90it/s, Loss: 0.25724][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.89it/s, Loss: 0.25724][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.89it/s, Loss: 0.25723][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.25723][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.25727][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.98it/s, Loss: 0.25727][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.98it/s, Loss: 0.25729][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.98it/s, Loss: 0.25729][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.98it/s, Loss: 0.25731][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.98it/s, Loss: 0.25731][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.98it/s, Loss: 0.25731][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.95it/s, Loss: 0.25731][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.95it/s, Loss: 0.25733][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.88it/s, Loss: 0.25733][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.88it/s, Loss: 0.25733][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.87it/s, Loss: 0.25733][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.87it/s, Loss: 0.25733][A
+[AI1021 17:40:32.485590 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5329990054602053 ,  macro_AUC : 0.5018330048303205
+I1021 17:40:32.486097 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0016801075268817205, top5_precision : 0.004838709677419355
+I1021 17:40:32.491860 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_16/config.json
+I1021 17:40:32.857248 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_16/pytorch_model.bin
+I1021 17:40:33.607562 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_16
+Epoch 2:  61%|######1   | 19/31 [00:35<00:35,  2.94s/it, Loss: 0.27363]Epoch 2:  61%|######1   | 19/31 [00:35<00:35,  2.94s/it, Loss: 0.27299]Epoch 2:  65%|######4   | 20/31 [00:35<00:23,  2.16s/it, Loss: 0.27299]Epoch 2:  65%|######4   | 20/31 [00:35<00:23,  2.16s/it, Loss: 0.27234]Epoch 2:  68%|######7   | 21/31 [00:35<00:16,  1.61s/it, Loss: 0.27234]Epoch 2:  68%|######7   | 21/31 [00:35<00:16,  1.61s/it, Loss: 0.27177]Epoch 2:  71%|#######   | 22/31 [00:36<00:11,  1.23s/it, Loss: 0.27177]Epoch 2:  71%|#######   | 22/31 [00:36<00:11,  1.23s/it, Loss: 0.27115]Epoch 2:  74%|#######4  | 23/31 [00:36<00:07,  1.04it/s, Loss: 0.27115]Epoch 2:  74%|#######4  | 23/31 [00:36<00:07,  1.04it/s, Loss: 0.27077]I1021 17:40:35.278732 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:40:35.279136 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.24it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  7.24it/s, Loss: 0.25377][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.17it/s, Loss: 0.25377][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  7.17it/s, Loss: 0.25399][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.13it/s, Loss: 0.25399][A
+Evaluating:  10%|9         | 3/31 [00:00<00:03,  7.13it/s, Loss: 0.25431][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.25431][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  7.02it/s, Loss: 0.25422][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.97it/s, Loss: 0.25422][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.97it/s, Loss: 0.25454][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.97it/s, Loss: 0.25454][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.97it/s, Loss: 0.25459][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  7.00it/s, Loss: 0.25459][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  7.00it/s, Loss: 0.25461][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.93it/s, Loss: 0.25461][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.93it/s, Loss: 0.25448][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.97it/s, Loss: 0.25448][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  6.97it/s, Loss: 0.25439][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.29it/s, Loss: 0.25439][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:03,  6.29it/s, Loss: 0.25441][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.44it/s, Loss: 0.25441][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:03,  6.44it/s, Loss: 0.25440][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.59it/s, Loss: 0.25440][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.59it/s, Loss: 0.25438][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.70it/s, Loss: 0.25438][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  6.70it/s, Loss: 0.25442][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.76it/s, Loss: 0.25442][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.76it/s, Loss: 0.25439][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.82it/s, Loss: 0.25439][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.82it/s, Loss: 0.25433][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.89it/s, Loss: 0.25433][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.89it/s, Loss: 0.25429][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.95it/s, Loss: 0.25429][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.95it/s, Loss: 0.25425][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.89it/s, Loss: 0.25425][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.89it/s, Loss: 0.25427][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.95it/s, Loss: 0.25427][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.95it/s, Loss: 0.25430][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.93it/s, Loss: 0.25430][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.93it/s, Loss: 0.25431][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.90it/s, Loss: 0.25431][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.90it/s, Loss: 0.25437][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.91it/s, Loss: 0.25437][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.91it/s, Loss: 0.25438][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.95it/s, Loss: 0.25438][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.95it/s, Loss: 0.25435][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.93it/s, Loss: 0.25435][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.93it/s, Loss: 0.25432][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.77it/s, Loss: 0.25432][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.77it/s, Loss: 0.25431][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.85it/s, Loss: 0.25431][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.85it/s, Loss: 0.25433][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.88it/s, Loss: 0.25433][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.88it/s, Loss: 0.25433][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.86it/s, Loss: 0.25433][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.86it/s, Loss: 0.25431][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.89it/s, Loss: 0.25431][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.89it/s, Loss: 0.25432][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.96it/s, Loss: 0.25432][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.96it/s, Loss: 0.25431][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.89it/s, Loss: 0.25431][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.89it/s, Loss: 0.25431][A
+[AI1021 17:40:41.429907 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5331193647616309 ,  macro_AUC : 0.5009681208323135
+I1021 17:40:41.430398 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0016801075268817205, top5_precision : 0.004838709677419355
+I1021 17:40:41.437145 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_17/config.json
+I1021 17:40:41.806514 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_17/pytorch_model.bin
+I1021 17:40:42.551174 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_17
+Epoch 2:  77%|#######7  | 24/31 [00:44<00:20,  2.96s/it, Loss: 0.27077]Epoch 2:  77%|#######7  | 24/31 [00:44<00:20,  2.96s/it, Loss: 0.27024]Epoch 2:  81%|########  | 25/31 [00:44<00:13,  2.17s/it, Loss: 0.27024]Epoch 2:  81%|########  | 25/31 [00:44<00:13,  2.17s/it, Loss: 0.26989]Epoch 2:  84%|########3 | 26/31 [00:44<00:08,  1.62s/it, Loss: 0.26989]Epoch 2:  84%|########3 | 26/31 [00:44<00:08,  1.62s/it, Loss: 0.26946]Epoch 2:  87%|########7 | 27/31 [00:45<00:04,  1.24s/it, Loss: 0.26946]Epoch 2:  87%|########7 | 27/31 [00:45<00:04,  1.24s/it, Loss: 0.26906]Epoch 2:  90%|######### | 28/31 [00:45<00:02,  1.02it/s, Loss: 0.26906]Epoch 2:  90%|######### | 28/31 [00:45<00:02,  1.02it/s, Loss: 0.26868]I1021 17:40:44.302440 140697115522880 xlnet_evaluation.py:39] ***** Running evaluation *****
+I1021 17:40:44.302880 140697115522880 xlnet_evaluation.py:40]   Num batches = 31
+
+Evaluating:   0%|          | 0/31 [00:00<?, ?it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.72it/s][A
+Evaluating:   3%|3         | 1/31 [00:00<00:04,  6.72it/s, Loss: 0.25212][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.80it/s, Loss: 0.25212][A
+Evaluating:   6%|6         | 2/31 [00:00<00:04,  6.80it/s, Loss: 0.25219][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.86it/s, Loss: 0.25219][A
+Evaluating:  10%|9         | 3/31 [00:00<00:04,  6.86it/s, Loss: 0.25236][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.89it/s, Loss: 0.25236][A
+Evaluating:  13%|#2        | 4/31 [00:00<00:03,  6.89it/s, Loss: 0.25222][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.94it/s, Loss: 0.25222][A
+Evaluating:  16%|#6        | 5/31 [00:00<00:03,  6.94it/s, Loss: 0.25237][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.94it/s, Loss: 0.25237][A
+Evaluating:  19%|#9        | 6/31 [00:00<00:03,  6.94it/s, Loss: 0.25243][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.86it/s, Loss: 0.25243][A
+Evaluating:  23%|##2       | 7/31 [00:01<00:03,  6.86it/s, Loss: 0.25248][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.97it/s, Loss: 0.25248][A
+Evaluating:  26%|##5       | 8/31 [00:01<00:03,  6.97it/s, Loss: 0.25255][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.03it/s, Loss: 0.25255][A
+Evaluating:  29%|##9       | 9/31 [00:01<00:03,  7.03it/s, Loss: 0.25251][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.03it/s, Loss: 0.25251][A
+Evaluating:  32%|###2      | 10/31 [00:01<00:02,  7.03it/s, Loss: 0.25254][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.92it/s, Loss: 0.25254][A
+Evaluating:  35%|###5      | 11/31 [00:01<00:02,  6.92it/s, Loss: 0.25250][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.25250][A
+Evaluating:  39%|###8      | 12/31 [00:01<00:02,  6.99it/s, Loss: 0.25255][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  7.05it/s, Loss: 0.25255][A
+Evaluating:  42%|####1     | 13/31 [00:01<00:02,  7.05it/s, Loss: 0.25260][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.99it/s, Loss: 0.25260][A
+Evaluating:  45%|####5     | 14/31 [00:02<00:02,  6.99it/s, Loss: 0.25261][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.99it/s, Loss: 0.25261][A
+Evaluating:  48%|####8     | 15/31 [00:02<00:02,  6.99it/s, Loss: 0.25263][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.89it/s, Loss: 0.25263][A
+Evaluating:  52%|#####1    | 16/31 [00:02<00:02,  6.89it/s, Loss: 0.25270][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.85it/s, Loss: 0.25270][A
+Evaluating:  55%|#####4    | 17/31 [00:02<00:02,  6.85it/s, Loss: 0.25272][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.92it/s, Loss: 0.25272][A
+Evaluating:  58%|#####8    | 18/31 [00:02<00:01,  6.92it/s, Loss: 0.25276][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.91it/s, Loss: 0.25276][A
+Evaluating:  61%|######1   | 19/31 [00:02<00:01,  6.91it/s, Loss: 0.25275][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.95it/s, Loss: 0.25275][A
+Evaluating:  65%|######4   | 20/31 [00:02<00:01,  6.95it/s, Loss: 0.25276][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.91it/s, Loss: 0.25276][A
+Evaluating:  68%|######7   | 21/31 [00:03<00:01,  6.91it/s, Loss: 0.25275][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.92it/s, Loss: 0.25275][A
+Evaluating:  71%|#######   | 22/31 [00:03<00:01,  6.92it/s, Loss: 0.25276][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.84it/s, Loss: 0.25276][A
+Evaluating:  74%|#######4  | 23/31 [00:03<00:01,  6.84it/s, Loss: 0.25275][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.84it/s, Loss: 0.25275][A
+Evaluating:  77%|#######7  | 24/31 [00:03<00:01,  6.84it/s, Loss: 0.25280][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.25280][A
+Evaluating:  81%|########  | 25/31 [00:03<00:00,  6.92it/s, Loss: 0.25280][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.93it/s, Loss: 0.25280][A
+Evaluating:  84%|########3 | 26/31 [00:03<00:00,  6.93it/s, Loss: 0.25277][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.93it/s, Loss: 0.25277][A
+Evaluating:  87%|########7 | 27/31 [00:03<00:00,  6.93it/s, Loss: 0.25282][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.90it/s, Loss: 0.25282][A
+Evaluating:  90%|######### | 28/31 [00:04<00:00,  6.90it/s, Loss: 0.25282][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.32it/s, Loss: 0.25282][A
+Evaluating:  94%|#########3| 29/31 [00:04<00:00,  6.32it/s, Loss: 0.25280][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.49it/s, Loss: 0.25280][A
+Evaluating:  97%|#########6| 30/31 [00:04<00:00,  6.49it/s, Loss: 0.25281][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.60it/s, Loss: 0.25281][A
+Evaluating: 100%|##########| 31/31 [00:04<00:00,  6.60it/s, Loss: 0.25280][A
+[AI1021 17:40:50.450345 140697115522880 xlnet_evaluation.py:85] micro_AUC : 0.5343779986289645 ,  macro_AUC : 0.5014326402034515
+I1021 17:40:50.450971 140697115522880 xlnet_evaluation.py:86] top1_precision : 0.0020161290322580645 ,  top3_precision : 0.0016801075268817205, top5_precision : 0.004838709677419355
+I1021 17:40:50.459113 140697115522880 configuration_utils.py:71] Configuration saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_18/config.json
+I1021 17:40:50.826445 140697115522880 modeling_utils.py:205] Model weights saved in /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_18/pytorch_model.bin
+I1021 17:40:51.556505 140697115522880 xlnet_finetuning.py:122] Saving model checkpoint to /gpfs/data/razavianlab/capstone19/models/small/model_checkpoint_18
+Epoch 2:  94%|#########3| 29/31 [00:53<00:05,  2.97s/it, Loss: 0.26868]Epoch 2:  94%|#########3| 29/31 [00:53<00:05,  2.97s/it, Loss: 0.26832]Epoch 2:  97%|#########6| 30/31 [00:53<00:02,  2.18s/it, Loss: 0.26832]Epoch 2:  97%|#########6| 30/31 [00:53<00:02,  2.18s/it, Loss: 0.26796]Epoch 2: 100%|##########| 31/31 [00:53<00:00,  1.62s/it, Loss: 0.26796]Epoch 2: 100%|##########| 31/31 [00:53<00:00,  1.62s/it, Loss: 0.26761]

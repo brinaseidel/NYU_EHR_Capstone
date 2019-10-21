@@ -173,9 +173,9 @@ def main():
 
 	# Load data
 	logger.info("Loading train dataset")
-	train_dataloader = load_featurized_examples(args.batch_size, set_type = "train")
+	train_dataloader = load_featurized_examples(args.batch_size, set_type = "train", feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_small/')
 	logger.info("Loading validation dataset")
-	val_dataloader = load_featurized_examples(args.batch_size, set_type = "val")
+	val_dataloader = load_featurized_examples(args.batch_size, set_type = "val", feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_small/')
 
 	# Load pretrained model
 	num_train_optimization_steps = args.num_train_epochs * len(train_dataloader)
