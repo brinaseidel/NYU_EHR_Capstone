@@ -109,7 +109,7 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 
 				if save_step > 0 and global_step % save_step == 0:
 					# Save model and optimizer checkpoints
-					checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(int(global_step/save_step)))
+					checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(int(global_step/logging_step)))
 					
 					if not os.path.exists(checkpoint_save_path):
 						os.makedirs(checkpoint_save_path)

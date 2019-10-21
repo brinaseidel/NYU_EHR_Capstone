@@ -15,5 +15,5 @@ pip install --user transformers
 echo -e "GPUS = $CUDA_VISIBLE_DEVICES\n"
 
 #python xlnet_finetuning.py --model_id xlnet_finetune --batch_size 32 --num_train_epochs 3 --seed 100 --fp16
-python xlnet_finetuning.py --model_id xlnet_finetune --batch_size 32 --num_train_epochs 3 --seed 100 --fp16 --logging_step 10 --save_step 10
+python xlnet_finetuning.py --model_id xlnet_finetune --batch_size 32 --num_train_epochs 3 --seed 100 --fp16 --logging_step 10000 --save_step 100000
 
