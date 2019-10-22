@@ -3,6 +3,7 @@ import logging
 logger = logging.getLogger(__name__)
 import pandas as pd
 import numpy as np
+from scipy import stats
 import torch
 import os
 import sys
@@ -44,7 +45,7 @@ class DataProcessor(object):
 		examples = []
 
 		for i in range(df.shape[0]):
-			
+
 			guid = "%s-%s" % (set_type, i)
 			text_a = df['NOTE_TEXT'].iloc[i]
 			label = df['ICD_DIAGNOSIS_CODE_cleaned'].iloc[i]
@@ -79,19 +80,24 @@ def ICD2Idx(lsICD, dict):
 def convert_examples_to_features(examples, max_seq_length,
 								 tokenizer):
 	"""Loads a data file into a list of `InputBatch`s."""
-	
+
 	# Path to list of ICD codes and their count in the training data
 	label_map = loadICDDict(path = '/gpfs/data/razavianlab/ehr_transformer/analysis/trainICD_count_afterFill.csv', minCount=1000)
 	num_icd = len(label_map)
 	logger.info("Number of ICD codes: {}".format(num_icd))
-	
+
+	unk_token = tokenizer.unk_token
+	unk_id = tokenizer.convert_tokens_to_ids(unk_token).item()
+
+	lengths = []
+	count_unknowns = []
 	features = []
 	for (ex_index, example) in enumerate(examples):
 		if ex_index % 10000 == 0:
 			logger.info("Writing example %d of %d" % (ex_index, len(examples)))
 
 		tokens_a = tokenizer.tokenize(example.text_a)
-
+		lengths.append(len(tokens_a))
 		# Use this for 2 sentence tasks. We do not need it for ICD code classification.
 		tokens_b = None
 		if example.text_b:
@@ -115,7 +121,8 @@ def convert_examples_to_features(examples, max_seq_length,
 			segment_ids += [1] * (len(tokens_b) + 1)
 
 		input_ids = tokenizer.convert_tokens_to_ids(tokens)
-
+		num_unknowns = input_ids.eq(unk_id).sum()
+		count_unknowns.append(num_unknowns)
 		# The mask has 1 for real tokens and 0 for padding tokens. Only real
 		# tokens are attended to.
 		input_mask = [1] * len(input_ids)
@@ -131,7 +138,7 @@ def convert_examples_to_features(examples, max_seq_length,
 		assert len(segment_ids) == max_seq_length
 
 
-		icd_id, unk = ICD2Idx(example.label.split() , label_map) 
+		icd_id, unk = ICD2Idx(example.label.split() , label_map)
 		icd_id = [i for i in icd_id if i < num_icd]
 
 		binary_label = np.zeros(num_icd)
@@ -143,10 +150,16 @@ def convert_examples_to_features(examples, max_seq_length,
 							  input_mask = torch.tensor(input_mask, dtype=torch.int8),
 							  segment_ids = torch.tensor(segment_ids, dtype=torch.int8),
 							  label_id= torch.tensor(binary_label, dtype=torch.int8)))
-				
-	
-	return features
-	
+
+
+	return features, count_unknowns, lengths
+
+def calculate_oov_statistics(count_unknowns, lengths, max_seq_length):
+	included_tokens = [max(length, max_seq_length) for length in lengths]
+	per_example_oov = [count_unknowns[i]/included_tokens[i] for i in range(len(included_tokens))]
+	logger.info(stats.describe(np.array(per_example_oov)))
+	return per_example_oov
+
 def main():
 	# TODO: Add multi processing
 	parser = argparse.ArgumentParser()
@@ -158,19 +171,19 @@ def main():
 
 	parser.add_argument("--set_type",
 						type=str,
-						help="Specify train/val/test")	
+						help="Specify train/val/test")
 
 	parser.add_argument("--max_seq_length",
 						default=128,
 						type=int,
-						help="Maximum length of input sequence")	
+						help="Maximum length of input sequence")
 
 	args = parser.parse_args()
 
 	# Section: Set device for PyTorch
 	if torch.cuda.is_available():
 		 # might need to update when using more than 1 GPU
-		device = torch.device("cuda") 
+		device = torch.device("cuda")
 	else:
 		device = torch.device("cpu")
 	processor = DataProcessor()
@@ -181,20 +194,23 @@ def main():
 	tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
 
 	logger.info("***** Converting examples to features *****")
-	features = convert_examples_to_features(examples, max_seq_length = args.max_seq_length, tokenizer=tokenizer)
+	features, count_unknowns, lengths = convert_examples_to_features(examples, max_seq_length = args.max_seq_length, tokenizer=tokenizer)
+	per_example_oov = calculate_oov_statistics(count_unknowns = count_unknowns, lengths = lengths, max_seq_length = args.max_seq_length)
+
 	logger.info("  Num examples = %d", len(examples))
 
 	feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/'
-	
+
 	all_input_ids = torch.stack([f.input_ids for f in features])
 	all_input_mask = torch.stack([f.input_mask for f in features])
 	all_segment_ids = torch.stack([f.segment_ids for f in features])
 	all_label_ids = torch.stack([f.label_id for f in features])
-	
+
 	torch.save(all_input_ids , feature_save_path + args.set_type + '_input_ids.pt')
-	torch.save(all_input_mask , feature_save_path + args.set_type + '_input_mask.pt') 
+	torch.save(all_input_mask , feature_save_path + args.set_type + '_input_mask.pt')
 	torch.save(all_segment_ids , feature_save_path + args.set_type + '_segment_ids.pt')
 	torch.save(all_label_ids , feature_save_path + args.set_type + '_labels.pt')
+	torch.save(per_example_oov, feature_save_path + args.set_type + '_per_example_oov.pt')
 
 if __name__ == "__main__":
 	main()
