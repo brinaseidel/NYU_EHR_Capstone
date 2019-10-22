@@ -14,6 +14,5 @@ module load gcc/4.9.3
 pip install --user transformers
 
 echo -e "GPUS = $CUDA_VISIBLE_DEVICES\n"
-
-python xlnet_preprocess.py --filename "train_cleaned.csv.gz" --set_type "train_256" --max_seq_length 256
-python xlnet_preprocess.py --filename "dev_cleaned.csv.gz" --set_type "val_256" --max_seq_length 256
+python xlnet_preprocess.py --filename "train_cleaned.csv.gz" --set_type "train" --max_seq_length 256
+python xlnet_preprocess.py --filename "dev_cleaned.csv.gz" --set_type "val" --max_seq_length 256

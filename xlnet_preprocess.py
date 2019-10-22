@@ -87,7 +87,7 @@ def convert_examples_to_features(examples, max_seq_length,
 	logger.info("Number of ICD codes: {}".format(num_icd))
 
 	unk_token = tokenizer.unk_token
-	unk_id = tokenizer.convert_tokens_to_ids(unk_token).item()
+	unk_id = tokenizer.convert_tokens_to_ids(unk_token)
 
 	lengths = []
 	count_unknowns = []
@@ -121,7 +121,7 @@ def convert_examples_to_features(examples, max_seq_length,
 			segment_ids += [1] * (len(tokens_b) + 1)
 
 		input_ids = tokenizer.convert_tokens_to_ids(tokens)
-		num_unknowns = input_ids.eq(unk_id).sum()
+		num_unknowns = input_ids.count(unk_id)
 		count_unknowns.append(num_unknowns)
 		# The mask has 1 for real tokens and 0 for padding tokens. Only real
 		# tokens are attended to.
@@ -155,7 +155,7 @@ def convert_examples_to_features(examples, max_seq_length,
 	return features, count_unknowns, lengths
 
 def calculate_oov_statistics(count_unknowns, lengths, max_seq_length):
-	included_tokens = [max(length, max_seq_length) for length in lengths]
+	included_tokens = [min(length, max_seq_length) for length in lengths]
 	per_example_oov = [count_unknowns[i]/included_tokens[i] for i in range(len(included_tokens))]
 	logger.info(stats.describe(np.array(per_example_oov)))
 	return per_example_oov
@@ -192,6 +192,7 @@ def main():
 	examples = processor.get_examples(filename = args.filename , set_type = args.set_type)
 
 	tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
+	tokenizer.add_special_tokens({'cls_token':'[CLS]', 'sep_token':'[SEP]'})
 
 	logger.info("***** Converting examples to features *****")
 	features, count_unknowns, lengths = convert_examples_to_features(examples, max_seq_length = args.max_seq_length, tokenizer=tokenizer)
