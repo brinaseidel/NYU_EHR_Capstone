@@ -3,10 +3,10 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem-per-cpu=64G
-#SBATCH --time=14-00:00:00
-#SBATCH --partition=gpu4_long
+#SBATCH --time=12:00:00
+#SBATCH --partition=gpu4_short
 #SBATCH --gres=gpu:4
-#SBATCH --output=/gpfs/data/razavianlab/capstone19/logs/xlnet_finetune_256.log
+#SBATCH --output=/gpfs/data/razavianlab/capstone19/logs/xlnet_finetune_256_short.log
 
 module load python/gpu/3.6.5
 module load gcc/4.9.3

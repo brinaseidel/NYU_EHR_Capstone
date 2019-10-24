@@ -112,12 +112,12 @@ def convert_examples_to_features(examples, max_seq_length,
 				tokens_a = tokens_a[:(max_seq_length - 2)]
 
 		# Add tokens for start and end of sequence
-		tokens = ["[CLS]"] + tokens_a + ["[SEP]"]
+		tokens = ["<cls>"] + tokens_a + ["<sep>"]
 		segment_ids = [0] * len(tokens)
 
 		# Use this for 2 sentence tasks. We do not need it for ICD code classification.
 		if tokens_b:
-			tokens += tokens_b + ["[SEP]"]
+			tokens += tokens_b + ["<sep>"]
 			segment_ids += [1] * (len(tokens_b) + 1)
 
 		input_ids = tokenizer.convert_tokens_to_ids(tokens)
@@ -162,6 +162,7 @@ def calculate_oov_statistics(count_unknowns, lengths, max_seq_length):
 
 def main():
 	# TODO: Add multi processing
+	print("Entered main")
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("--filename",
@@ -192,8 +193,7 @@ def main():
 	examples = processor.get_examples(filename = args.filename , set_type = args.set_type)
 
 	tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
-	tokenizer.add_special_tokens({'cls_token':'[CLS]', 'sep_token':'[SEP]'})
-
+	
 	logger.info("***** Converting examples to features *****")
 	features, count_unknowns, lengths = convert_examples_to_features(examples, max_seq_length = args.max_seq_length, tokenizer=tokenizer)
 	per_example_oov = calculate_oov_statistics(count_unknowns = count_unknowns, lengths = lengths, max_seq_length = args.max_seq_length)
