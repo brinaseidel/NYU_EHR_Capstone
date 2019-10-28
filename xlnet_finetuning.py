@@ -171,7 +171,7 @@ def main():
 						default=100000,
 						type=int,
 						help="Number of steps in between logs of performance on validation set")
-		parser.add_argument("--train_logging_step",
+	parser.add_argument("--train_logging_step",
 						default=1000,
 						type=int,
 						help="Number of steps in between logs of performance on training set")
