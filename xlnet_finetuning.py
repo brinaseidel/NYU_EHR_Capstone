@@ -19,8 +19,9 @@ from tqdm import tqdm
 from torch.nn import BCEWithLogitsLoss
 from sklearn import metrics
 import json
+import pickle
 
-def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/'):
+def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small'):
 	input_ids = torch.load(feature_save_path + set_type + '_input_ids.pt')
 	input_mask = torch.load(feature_save_path + set_type + '_input_mask.pt')
 	segment_ids = torch.load(feature_save_path + set_type + '_segment_ids.pt')
@@ -52,74 +53,87 @@ def initialize_optimizer(model, train_dataloader, args):
 	scheduler = WarmupLinearSchedule(optimizer, warmup_steps=0, t_total=len(train_dataloader)*args.num_train_epochs)
 	return optimizer, scheduler, model
 
-def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, logging_step = 100000):
+def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals'):
 	global_step = 0
-	# create folder to save all checkpoints for this model
+
+	# Get path to the file where we will save train performance
+	train_file_name = os.path.join(eval_folder, model_id + "_train_metrics.p")
+	# Create empty data frame to store training results in (to be written to train_file_name)
+	train_results = pd.DataFrame(columns=['loss'])
+
+	# Get path to the file where we will save validation performance
+	val_file_name = os.path.join(eval_folder, model_id + "_val_metrics.p")
+	# Create empty data frame to store evaluation results in (to be written to val_file_name)
+	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision'])
+	
+
+	# Create folder to save all checkpoints for this model
 	model_save_path = os.path.join(models_folder, model_id)
 	if not os.path.exists(model_save_path):
 		os.makedirs(model_save_path)
 
 	for epoch in range(num_train_epochs):
-		with tqdm(total=len(train_dataloader), desc="Epoch {}".format(epoch)) as progressbar:
-			train_loss = 0
-			number_steps = 0
-			for i, batch in enumerate(train_dataloader):
-				model.train()
-				input_ids, input_mask, segment_ids, label_ids = batch
+		train_loss = 0
+		number_steps = 0
+		for i, batch in enumerate(train_dataloader):
+			model.train()
+			input_ids, input_mask, segment_ids, label_ids = batch
 
-				input_ids = input_ids.to(device).long()
-				input_mask = input_mask.to(device).long()
-				segment_ids = segment_ids.to(device).long()
+			input_ids = input_ids.to(device).long()
+			input_mask = input_mask.to(device).long()
+			segment_ids = segment_ids.to(device).long()
 
-				# Might need to add .half() or .long() depending on amp versions
-				label_ids = label_ids.to(device).float()
+			# Might need to add .half() or .long() depending on amp versions
+			label_ids = label_ids.to(device).float()
+			
+			logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
+			
+			criterion = BCEWithLogitsLoss()
+			loss = criterion(logits, label_ids)
+
+			if n_gpu > 1:
+				loss = loss.mean()
+
+			# Required for fp16
+			with amp.scale_loss(loss, optimizer) as scaled_loss:
+				scaled_loss.backward()
+			# Prevent exploding gradients and set max gradient norm to 1
+			torch.nn.utils.clip_grad_norm(amp.master_params(optimizer), max_norm = 1)
+
+			train_loss += loss.item()
+			number_steps += 1
+			mean_loss = train_loss/number_steps
+
+			scheduler.step()
+			optimizer.step()
+			model.zero_grad()
+
+			global_step += 1
+
+			# Log training loss
+			if train_logging_step > 0 and global_step % train_logging_step == 0:
+				logger.info("Training loss: {0:.5f}".format(mean_loss))
+				train_results = train_results.append(pd.DataFrame.from_dict({'loss': mean_loss}, index=[global_step]))
+				pickle.dump(train_results, open(train_file_name, "wb"))
+			# Log validtion metrics
+			if val_logging_step > 0 and global_step % logging_step == 0:
+				results = evaluate(dataloader = val_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device)
+				val_results = val_results.append(pd.DataFrame.from_dict(results, index=[global_step]))
+				pickle.dump(val_results, open(val_file_name, "wb"))
+			# Save a copy of the model every save_step
+			if save_step > 0 and global_step % save_step == 0:
+				# Save model and optimizer checkpoints
+				checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(int(global_step/logging_step)))
 				
-				logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
-				
-				criterion = BCEWithLogitsLoss()
-				loss = criterion(logits, label_ids)
+				if not os.path.exists(checkpoint_save_path):
+					os.makedirs(checkpoint_save_path)
 
-				if n_gpu > 1:
-					loss = loss.mean()
-
-				# Required for fp16
-				with amp.scale_loss(loss, optimizer) as scaled_loss:
-					scaled_loss.backward()
-				# Prevent exploding gradients and set max gradient norm to 1
-				torch.nn.utils.clip_grad_norm(amp.master_params(optimizer), max_norm = 1)
-
-				train_loss += loss.item()
-				number_steps += 1
-				mean_loss = train_loss/number_steps
-
-				# TODO: Calculate training loss after some specified number of batches
-				progressbar.update(1)
-				progressbar.set_postfix_str("Loss: {0:.5f}".format(mean_loss))
-
-				scheduler.step()
-				optimizer.step()
-				model.zero_grad()
-
-				global_step += 1
-
-				if logging_step > 0 and global_step % logging_step == 0:
-					# Log metrics
-					eval_file_name = model_id + '_checkpoint_{}.json'.format(int(global_step/logging_step))
-					results = evaluate(dataloader = val_dataloader, model = model, eval_file_name = eval_file_name, n_gpu=n_gpu, device=device)
-
-				if save_step > 0 and global_step % save_step == 0:
-					# Save model and optimizer checkpoints
-					checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(int(global_step/logging_step)))
-					
-					if not os.path.exists(checkpoint_save_path):
-						os.makedirs(checkpoint_save_path)
-
-					model_to_save = model.module if hasattr(model, 'module') else model
-					model_to_save.save_pretrained(checkpoint_save_path)
-					torch.save({'optimizer':optimizer.state_dict(),
-								'scheduler': scheduler.state_dict(),
-								'step': global_step}, os.path.join(checkpoint_save_path, 'optimizer.pt'))
-					logger.info("Saving model checkpoint to {}".format(checkpoint_save_path))
+				model_to_save = model.module if hasattr(model, 'module') else model
+				model_to_save.save_pretrained(checkpoint_save_path)
+				torch.save({'optimizer':optimizer.state_dict(),
+							'scheduler': scheduler.state_dict(),
+							'step': global_step}, os.path.join(checkpoint_save_path, 'optimizer.pt'))
+				logger.info("Saving model checkpoint to {}".format(checkpoint_save_path))
 
 def main():
 
@@ -151,10 +165,14 @@ def main():
 						default=3.0,
 						type=int,
 						help="Total number of training epochs to perform.")
-	parser.add_argument("--logging_step",
+	parser.add_argument("--val_logging_step",
 						default=100000,
 						type=int,
-						help="Number of steps to log progress")
+						help="Number of steps in between logs of performance on validation set")
+		parser.add_argument("--train_logging_step",
+						default=1000,
+						type=int,
+						help="Number of steps in between logs of performance on training set")
 	parser.add_argument("--save_step",
 						default=100000,
 						type=int,
@@ -165,6 +183,9 @@ def main():
 	parser.add_argument('--fp16',
 						action='store_true',
 						help="Whether to use 16-bit float precision instead of 32-bit")
+	parser.add_argument("--feature_save_dir",
+						type=str,
+						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/feature_save_dir'. ")
 	args = parser.parse_args()
 
 	# Set random seed
@@ -172,10 +193,11 @@ def main():
 
 
 	# Load data
+	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading train dataset")
-	train_dataloader = load_featurized_examples(args.batch_size, set_type = "train")
+	train_dataloader = load_featurized_examples(args.batch_size, set_type = "train", feature_save_path=feature_save_path)
 	logger.info("Loading validation dataset")
-	val_dataloader = load_featurized_examples(args.batch_size, set_type = "val")
+	val_dataloader = load_featurized_examples(args.batch_size, set_type = "val", feature_save_path=feature_save_path)
 
 	# Load pretrained model
 	num_train_optimization_steps = args.num_train_epochs * len(train_dataloader)
@@ -192,7 +214,7 @@ def main():
 	logger.info("  Total optimization steps = %d", len(train_dataloader)*args.num_train_epochs)
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, logging_step = args.logging_step)
+	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step)
 
 if __name__ == "__main__":
 	main()

@@ -178,7 +178,9 @@ def main():
 						default=128,
 						type=int,
 						help="Maximum length of input sequence")
-
+	parser.add_argument("--feature_save_dir",
+						type=str,
+						help="Preprocessed data (features) will be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/feature_save_dir'. ")
 	args = parser.parse_args()
 
 	# Section: Set device for PyTorch
@@ -200,7 +202,7 @@ def main():
 
 	logger.info("  Num examples = %d", len(examples))
 
-	feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/'
+	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 
 	all_input_ids = torch.stack([f.input_ids for f in features])
 	all_input_mask = torch.stack([f.input_mask for f in features])

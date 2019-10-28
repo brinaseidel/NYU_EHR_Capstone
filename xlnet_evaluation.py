@@ -35,7 +35,7 @@ def topKPrecision(pred, true, k):
 	result = np.sum(true_sort[:,-k:].astype(np.float64)) / k / n_sample
 	return result
 
-def evaluate(dataloader, model,eval_file_name, n_gpu, device, eval_folder = '/gpfs/data/razavianlab/capstone19/evals'):
+def evaluate(dataloader, model, model_id, n_gpu, device):
 	logger.info("***** Running evaluation *****")
 	logger.info("  Num batches = %d", len(dataloader))
 	eval_loss = 0.0
@@ -43,34 +43,31 @@ def evaluate(dataloader, model,eval_file_name, n_gpu, device, eval_folder = '/gp
 	preds = []
 	target = []
 	
-	with tqdm(total=len(dataloader), desc=f"Evaluating") as progressbar:
-		for batch in dataloader:
-			model.eval()
-			input_ids, input_mask, segment_ids, label_ids = batch
-			input_ids = input_ids.to(device).long()
-			input_mask = input_mask.to(device).long()
-			segment_ids = segment_ids.to(device).long()
-			label_ids = label_ids.to(device).float()
-			
-			with torch.no_grad():
-				logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
-			criterion = BCEWithLogitsLoss()
-			loss = criterion(logits, label_ids)
+	for batch in dataloader:
+		model.eval()
+		input_ids, input_mask, segment_ids, label_ids = batch
+		input_ids = input_ids.to(device).long()
+		input_mask = input_mask.to(device).long()
+		segment_ids = segment_ids.to(device).long()
+		label_ids = label_ids.to(device).float()
+		
+		with torch.no_grad():
+			logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
+		criterion = BCEWithLogitsLoss()
+		loss = criterion(logits, label_ids)
 
-			# TODO: Check why we take mean
-			#print("loss = ", loss)
-			if n_gpu > 1:
-				eval_loss += loss.mean().item()
-			else:
-				eval_loss += loss.item()
+		# TODO: Check why we take mean
+		#print("loss = ", loss)
+		if n_gpu > 1:
+			eval_loss += loss.mean().item()
+		else:
+			eval_loss += loss.item()
 
-			number_steps += 1
-			preds.append( logits.detach().cpu())
-			target.append(label_ids.detach().cpu())
-			progressbar.update(1)
-			# not used in calculations, for sanity checks
-			mean_loss = eval_loss/number_steps
-			progressbar.set_postfix_str(f"Loss: {mean_loss:.5f}")
+		number_steps += 1
+		preds.append( logits.detach().cpu())
+		target.append(label_ids.detach().cpu())
+		# not used in calculations, for sanity checks
+		mean_loss = eval_loss/number_steps
 
 	eval_loss = eval_loss / number_steps
 	preds = torch.cat(preds).numpy()
@@ -94,9 +91,7 @@ def evaluate(dataloader, model,eval_file_name, n_gpu, device, eval_folder = '/gp
 				'top5_precision' : top5_precision
 				}
 
-	eval_save_path = os.path.join(eval_folder, eval_file_name)
-	with open(eval_save_path, 'w') as outfile:
-		json.dump(results, outfile)
+	return results
 
 
 
