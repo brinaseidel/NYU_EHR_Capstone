@@ -1,7 +1,7 @@
 import torch
 import logging
 import argparse
-import os
+import os, stat
 import sys
 import pandas as pd
 import numpy as np
@@ -115,11 +115,13 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 				logger.info("Training loss: {0:.5f}".format(mean_loss))
 				train_results = train_results.append(pd.DataFrame.from_dict({'loss': mean_loss}, index=[global_step]))
 				pickle.dump(train_results, open(train_file_name, "wb"))
+				os.chmod(train_file_name, stat.S_IRWXG)
 			# Log validtion metrics
 			if val_logging_step > 0 and global_step % logging_step == 0:
 				results = evaluate(dataloader = val_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device)
 				val_results = val_results.append(pd.DataFrame.from_dict(results, index=[global_step]))
 				pickle.dump(val_results, open(val_file_name, "wb"))
+				os.chmod(val_file_name, stat.S_IRWXG)
 			# Save a copy of the model every save_step
 			if save_step > 0 and global_step % save_step == 0:
 				# Save model and optimizer checkpoints
