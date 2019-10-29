@@ -72,13 +72,14 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 	eval_loss = eval_loss / number_steps
 	preds = torch.cat(preds).numpy()
 	target = torch.cat(target).byte().numpy()
-
+	
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
 	macro_AUC = macroAUC(preds, target)
 	top1_precision = topKPrecision(preds, target, k = 1)
 	top3_precision = topKPrecision(preds, target, k = 3)
 	top5_precision = topKPrecision(preds, target, k = 5)
 
+	logger.info("Evaluation loss : {}".format(str(eval_loss)))
 	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
 	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
 

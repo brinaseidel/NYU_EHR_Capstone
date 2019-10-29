@@ -203,17 +203,19 @@ def main():
 	logger.info("  Num examples = %d", len(examples))
 
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
+	if not os.path.exists(feature_save_path):
+		os.makedirs(feature_save_path)
 
 	all_input_ids = torch.stack([f.input_ids for f in features])
 	all_input_mask = torch.stack([f.input_mask for f in features])
 	all_segment_ids = torch.stack([f.segment_ids for f in features])
 	all_label_ids = torch.stack([f.label_id for f in features])
 
-	torch.save(all_input_ids , feature_save_path + args.set_type + '_input_ids.pt')
-	torch.save(all_input_mask , feature_save_path + args.set_type + '_input_mask.pt')
-	torch.save(all_segment_ids , feature_save_path + args.set_type + '_segment_ids.pt')
-	torch.save(all_label_ids , feature_save_path + args.set_type + '_labels.pt')
-	torch.save(per_example_oov, feature_save_path + args.set_type + '_per_example_oov.pt')
+	torch.save(all_input_ids , os.path.join(feature_save_path, args.set_type + '_input_ids.pt'))
+	torch.save(all_input_mask , os.path.join(feature_save_path, args.set_type + '_input_mask.pt'))
+	torch.save(all_segment_ids , os.path.join(feature_save_path, args.set_type + '_segment_ids.pt'))
+	torch.save(all_label_ids , os.path.join(feature_save_path, args.set_type + '_labels.pt'))
+	torch.save(per_example_oov, os.path.join(feature_save_path, args.set_type + '_per_example_oov.pt'))
 
 if __name__ == "__main__":
 	main()
