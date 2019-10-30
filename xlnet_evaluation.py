@@ -64,7 +64,7 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 			eval_loss += loss.item()
 
 		number_steps += 1
-		preds.append( logits.detach().cpu())
+		preds.append(torch.sigmoid(logits).detach().cpu()) # sigmoid returns probabilities
 		target.append(label_ids.detach().cpu())
 		# not used in calculations, for sanity checks
 		mean_loss = eval_loss/number_steps
