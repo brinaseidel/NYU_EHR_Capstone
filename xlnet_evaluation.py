@@ -116,7 +116,52 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 
 def main():
 
-	# TODO: Add all main methods 
+	# Set device for PyTorch
+	if torch.cuda.is_available():
+		# might need to update when using more than 1 GPU
+		rank = 0
+		torch.cuda.set_device(rank)
+		device = torch.device("cuda", rank)
+		#torch.distributed.init_process_group(backend='nccl')
+		n_gpu = torch.cuda.device_count()
+	else:
+		device = torch.device("cpu")
+		n_gpu = 0
+        
+	print("N GPU: ", n_gpu)
+
+	# Parse arguments
+	parser = argparse.ArgumentParser()
+
+	parser.add_argument("--model_id",
+						type=str,
+						help="Model and optimizer should be saved at a folder inside '/gpfs/data/razavianlab/capstone19/models/{model_id}'. ")
+	parser.add_argument("--checkpoint",
+					type=str,
+					help="Checkpoint number. Model and optimizer should be saved at '/gpfs/data/razavianlab/capstone19/models/{model_id}/model_checkpoint_{checkpoint}'. ")
+	parser.add_argument('--fp16',
+						action='store_true',
+						help="Whether to use 16-bit float precision instead of 32-bit")
+	parser.add_argument("--feature_save_dir",
+						type=str,
+						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/{feature_save_dir}'. ")
+	args = parser.parse_args()
+
+	# Load training data
+	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
+	logger.info("Loading test dataset")
+	test_dataloader = load_featurized_examples(args.batch_size, set_type = "test", feature_save_path=feature_save_path)
+
+	# Load saved model
+	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', model_id, 'model_checkpoint_'+checkpoint)
+	logger.info("Loading saved model from {}".format(model_path))
+	config = XLNetConfig.from_pretrained(model_path, num_labels=2292) # TODO: check if we need this
+	model = XLNetForSequenceClassification.from_pretrained(model_path, config=config)
+	model.to(device)
+
+	# Run evaluation
+	results = evaluate(dataloader = test_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device)
+
 	return
 
 if __name__ == "__main__":
