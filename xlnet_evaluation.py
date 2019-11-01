@@ -17,6 +17,20 @@ from tqdm import tqdm
 from torch.nn import BCEWithLogitsLoss
 import json
 
+def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
+	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
+	input_mask = torch.load(os.path.join(feature_save_path, set_type + '_input_mask.pt'))
+	segment_ids = torch.load(os.path.join(feature_save_path, set_type + '_segment_ids.pt'))
+	labels = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
+
+	# Note: Possible to use SequentialSampler for eval, run time might be better
+	sampler = RandomSampler(data)
+
+	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
+
+	return dataloader
+
 def macroAUC(pred, true):
 	auc = []
 	for i in range(pred.shape[1]):
@@ -150,17 +164,17 @@ def main():
 	# Load training data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading test dataset")
-	test_dataloader = load_featurized_examples(args.batch_size, set_type = "test", feature_save_path=feature_save_path)
+	test_dataloader = load_featurized_examples(batch_size=32, set_type = "test", feature_save_path=feature_save_path)
 
 	# Load saved model
-	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', model_id, 'model_checkpoint_'+checkpoint)
+	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', args.model_id, 'model_checkpoint_'+args.checkpoint)
 	logger.info("Loading saved model from {}".format(model_path))
-	config = XLNetConfig.from_pretrained(model_path, num_labels=2292) # TODO: check if we need this
+	config = XLNetConfig.from_pretrained(os.path.join(model_path, 'config.json'), num_labels=2292) # TODO: check if we need this
 	model = XLNetForSequenceClassification.from_pretrained(model_path, config=config)
 	model.to(device)
 
 	# Run evaluation
-	results = evaluate(dataloader = test_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device)
+	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device)
 
 	return
 

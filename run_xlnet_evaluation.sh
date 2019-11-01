@@ -14,4 +14,4 @@ module load gcc/4.9.3
 pip install --user transformers
 
 echo -e "GPUS = $CUDA_VISIBLE_DEVICES\n"
-python xlnet_evaluation.py --model_id small_256 --checkpoint 1 --fp16 --feature_save_dir "small_256"
+python xlnet_evaluation.py --model_id xlnet_finetune_small256 --checkpoint 1 --fp16 --feature_save_dir "small_256"
