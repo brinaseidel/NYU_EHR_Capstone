@@ -172,6 +172,7 @@ def main():
 	config = XLNetConfig.from_pretrained(os.path.join(model_path, 'config.json'), num_labels=2292) # TODO: check if we need this
 	model = XLNetForSequenceClassification.from_pretrained(model_path, config=config)
 	model.to(device)
+	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
 	# Run evaluation
 	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device)
