@@ -38,7 +38,7 @@ def macroAUC(pred, true):
 			auc.append(metrics.roc_auc_score(true[:,i], pred[:,i]))
 		else:
 			auc.append(0.5)
-	return np.mean(auc)
+	return np.mean(auc), auc
 
 def topKPrecision(pred, true, k):
 	# pred: size of n_sample x n_class
@@ -88,7 +88,7 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 	target = torch.cat(target).byte().numpy()
 	
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
-	macro_AUC = macroAUC(preds, target)
+	macro_AUC, macro_AUC_list = macroAUC(preds, target)
 	top1_precision = topKPrecision(preds, target, k = 1)
 	top3_precision = topKPrecision(preds, target, k = 3)
 	top5_precision = topKPrecision(preds, target, k = 5)
@@ -103,7 +103,8 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 				'macro_AUC' : macro_AUC, 
 				'top1_precision' : top1_precision , 
 				'top3_precision' : top3_precision , 
-				'top5_precision' : top5_precision
+				'top5_precision' : top5_precision,
+				'macro_AUC_list': macro_AUC_list
 				}
 
 	return results
@@ -174,8 +175,16 @@ def main():
 	model.to(device)
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
+	eval_folder = '/gpfs/data/razavianlab/capstone19/evals'
+	val_file_name = os.path.join(eval_folder, model_id + "_test_metrics.p")
 	# Run evaluation
+	# Create empty data frame to store evaluation results in (to be written to val_file_name)
+    val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'macro_AUC_list'])
 	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device)
+	val_results = val_results.append(pd.DataFrame(results, index=[global_step]))
+	pickle.dump(val_results, open(val_file_name, "wb"))
+	os.system("chgrp razavianlab {}".format(val_file_name))
+
 
 	return
 
