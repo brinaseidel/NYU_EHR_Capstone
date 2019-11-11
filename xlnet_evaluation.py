@@ -142,7 +142,7 @@ def main():
 	else:
 		device = torch.device("cpu")
 		n_gpu = 0
-        
+		
 	print("N GPU: ", n_gpu)
 
 	# Parse arguments
@@ -179,7 +179,7 @@ def main():
 	val_file_name = os.path.join(eval_folder, model_id + "_test_metrics.p")
 	# Run evaluation
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
-    val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'macro_AUC_list'])
+	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'macro_AUC_list'])
 	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device)
 	val_results = val_results.append(pd.DataFrame(results, index=[global_step]))
 	pickle.dump(val_results, open(val_file_name, "wb"))

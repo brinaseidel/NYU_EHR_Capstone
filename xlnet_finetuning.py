@@ -138,6 +138,20 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 							'step': global_step}, os.path.join(checkpoint_save_path, 'optimizer.pt'))
 				logger.info("Saving model checkpoint to {}".format(checkpoint_save_path))
 
+	# Save model and optimizer checkpoints
+	final_save_path = os.path.join(model_save_path, 'model_checkpoint_final')
+
+	if not os.path.exists(final_save_path):
+		os.makedirs(final_save_path)
+
+	model_to_save = model.module if hasattr(model, 'module') else model
+	model_to_save.save_pretrained(final_save_path)
+	torch.save({'optimizer':optimizer.state_dict(),
+				'scheduler': scheduler.state_dict(),
+				'step': global_step}, os.path.join(final_save_path, 'optimizer.pt'))
+	logger.info("Saving final model to {}".format(final_save_path))
+
+
 def main():
 
 	# Section: Set device for PyTorch
@@ -151,7 +165,7 @@ def main():
 	else:
 		device = torch.device("cpu")
 		n_gpu = 0
-        
+		
 	print("N GPU: ", n_gpu)
 	# Parse arguments
 	parser = argparse.ArgumentParser()
@@ -218,6 +232,7 @@ def main():
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, scheduler = scheduler, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step)
+
 
 if __name__ == "__main__":
 	main()
