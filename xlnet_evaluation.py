@@ -16,6 +16,7 @@ from sklearn import metrics
 from tqdm import tqdm
 from torch.nn import BCEWithLogitsLoss
 import json
+import pickle
 
 def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
@@ -38,7 +39,7 @@ def macroAUC(pred, true):
 			auc.append(metrics.roc_auc_score(true[:,i], pred[:,i]))
 		else:
 			auc.append(0.5)
-	return np.mean(auc), auc
+	return np.mean(auc), [auc]
 
 def topKPrecision(pred, true, k):
 	# pred: size of n_sample x n_class
@@ -109,23 +110,6 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 
 	return results
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		
 		
 
@@ -176,12 +160,13 @@ def main():
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
 	eval_folder = '/gpfs/data/razavianlab/capstone19/evals'
-	val_file_name = os.path.join(eval_folder, model_id + "_test_metrics.p")
-	# Run evaluation
+	val_file_name = os.path.join(eval_folder, args.model_id + "_test_metrics.p")
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
 	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'macro_AUC_list'])
+	# Run evaluation
 	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device)
-	val_results = val_results.append(pd.DataFrame(results, index=[global_step]))
+	# Save results
+	val_results = val_results.append(pd.DataFrame(results, index=[0]))
 	pickle.dump(val_results, open(val_file_name, "wb"))
 	os.system("chgrp razavianlab {}".format(val_file_name))
 
