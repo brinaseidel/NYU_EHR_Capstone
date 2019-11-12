@@ -128,7 +128,7 @@ def convert_examples_to_features(examples, max_seq_length,
 		input_mask = [1] * len(input_ids)
 
 		# Zero-pad up to the sequence length.
-		padding = [0] * (max_seq_length - len(input_ids))
+		padding = [tokenizer.pad_token_id] * (max_seq_length - len(input_ids))
 		input_ids += padding
 		input_mask += padding
 		segment_ids += padding
