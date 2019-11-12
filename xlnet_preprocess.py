@@ -98,49 +98,28 @@ def convert_examples_to_features(examples, max_seq_length,
 
 		tokens_a = tokenizer.tokenize(example.text_a)
 		lengths.append(len(tokens_a))
-		# Use this for 2 sentence tasks. We do not need it for ICD code classification.
-		tokens_b = None
-		if example.text_b:
-			tokens_b = tokenizer.tokenize(example.text_b)
-			# Modifies `tokens_a` and `tokens_b` in place so that the total
-			# length is less than the specified length.
-			# Account for [CLS], [SEP], [SEP] with "- 3"
-			_truncate_seq_pair(tokens_a, tokens_b, max_seq_length - 3)
-		else:
-			# Account for [CLS] and [SEP] with "- 2"
-			if len(tokens_a) > max_seq_length - 2:
-				tokens_a = tokens_a[:(max_seq_length - 2)]
+		# Account for [CLS] and [SEP] with "- 2"
+		if len(tokens_a) > max_seq_length - 2:
+			tokens_a = tokens_a[:(max_seq_length - 2)]
+		n_tokens = len(tokens_a)
 
-		# Add tokens for start and end of sequence
-		tokens = ["<cls>"] + tokens_a + ["<sep>"]
-		segment_ids = [0] * len(tokens)
-
-		# Use this for 2 sentence tasks. We do not need it for ICD code classification.
-		if tokens_b:
-			tokens += tokens_b + ["<sep>"]
-			segment_ids += [1] * (len(tokens_b) + 1)
-
-		input_ids = tokenizer.convert_tokens_to_ids(tokens)
+		# Add tokens for start of the sequence, padding, and end of sequence
+		padding =  [tokenizer.pad_token_id] * (max_seq_length - n_tokens - 2) # -2 accoutns for [CLS] and [SEP]
+		input_ids = [tokenizer.cls_token_id] + tokenizer.convert_tokens_to_ids(tokens_a) + padding + [tokenizer.sep_token_id]
+		segment_ids = [0] * len(input_ids)
+		# Create input attention mask with 1 for real tokens and 0 for padding tokens. Only real tokens are attended to.
+		input_mask = [1]*(1+n_tokens) + [0]*len(padding) + [1] # attend to the [CLS] token, the real tokens, and the [SEP] token at the end
 		num_unknowns = input_ids.count(unk_id)
 		count_unknowns.append(num_unknowns)
-		# The mask has 1 for real tokens and 0 for padding tokens. Only real
-		# tokens are attended to.
-		input_mask = [1] * len(input_ids)
-
-		# Zero-pad up to the sequence length.
-		padding = [tokenizer.pad_token_id] * (max_seq_length - len(input_ids))
-		input_ids += padding
-		input_mask += padding
-		segment_ids += padding
-
+		
 		assert len(input_ids) == max_seq_length
 		assert len(input_mask) == max_seq_length
 		assert len(segment_ids) == max_seq_length
 
 
+		# Pre-process labels 
 		icd_id, unk = ICD2Idx(example.label.split() , label_map)
 		icd_id = [i for i in icd_id if i < num_icd]
-
 		binary_label = np.zeros(num_icd)
 		for l in icd_id:
 			binary_label[l] = 1
