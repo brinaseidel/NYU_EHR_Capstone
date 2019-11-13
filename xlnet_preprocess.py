@@ -103,12 +103,12 @@ def convert_examples_to_features(examples, max_seq_length,
 			tokens_a = tokens_a[:(max_seq_length - 2)]
 		n_tokens = len(tokens_a)
 
-		# Add tokens for start of the sequence, padding, and end of sequence
+		# Add tokens for padding, then the real tokens, then sep, then cls (this is the expected order for one-sequence tasks using XLNet)
 		padding =  [tokenizer.pad_token_id] * (max_seq_length - n_tokens - 2) # -2 accoutns for [CLS] and [SEP]
-		input_ids = [tokenizer.cls_token_id] + tokenizer.convert_tokens_to_ids(tokens_a) + padding + [tokenizer.sep_token_id]
+		input_ids = padding + tokenizer.convert_tokens_to_ids(tokens_a) + [tokenizer.sep_token_id] + [tokenizer.cls_token_id] 
 		segment_ids = [0] * len(input_ids)
 		# Create input attention mask with 1 for real tokens and 0 for padding tokens. Only real tokens are attended to.
-		input_mask = [1]*(1+n_tokens) + [0]*len(padding) + [1] # attend to the [CLS] token, the real tokens, and the [SEP] token at the end
+		input_mask = [0]*len(padding) + [1]*(n_tokens + 2)  # attend to the [CLS] token, the real tokens, and the [SEP] token
 		num_unknowns = input_ids.count(unk_id)
 		count_unknowns.append(num_unknowns)
 		
