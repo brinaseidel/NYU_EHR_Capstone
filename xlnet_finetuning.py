@@ -203,6 +203,10 @@ def main():
 	parser.add_argument("--feature_save_dir",
 						type=str,
 						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/feature_save_dir'. ")
+	parser.add_argument("--model_type",
+						default="base",
+						type=str,
+						help="Whether to use the xlnet base model or the xlnet large model")
 	args = parser.parse_args()
 
 	# Set random seed
@@ -218,8 +222,14 @@ def main():
 
 	# Load pretrained model
 	num_train_optimization_steps = args.num_train_epochs * len(train_dataloader)
-	config = XLNetConfig.from_pretrained('xlnet-base-cased', num_labels=2292) # TODO: check if we need this
-	model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', config=config)
+
+	if args.model_type == "large":
+		config = XLNetConfig.from_pretrained('xlnet-large-cased', num_labels=2292)
+		model = XLNetForSequenceClassification.from_pretrained('xlnet-large-cased', config=config)
+	else:
+		config = XLNetConfig.from_pretrained('xlnet-base-cased', num_labels=2292) # TODO: check if we need this
+		model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', config=config)
+
 	model.to(device)
 
 	optimizer, scheduler, model = initialize_optimizer(model, train_dataloader, args)
