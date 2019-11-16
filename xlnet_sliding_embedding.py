@@ -97,7 +97,7 @@ def main():
 
 			label_ids = label_ids.to(device).float()
 
-			transformer_outputs = model.transformer(input_ids = input_ids, 
+			transformer_outputs = model.module.transformer(input_ids = input_ids, 
 													token_type_ids=segment_ids,
 													input_mask=input_mask)
 			
