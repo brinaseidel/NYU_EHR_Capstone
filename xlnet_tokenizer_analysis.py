@@ -26,6 +26,14 @@ def load_featurized_examples(set_type, feature_save_path = '/gpfs/data/razavianl
 
 	return dataloader
 
+# TODO: Update to work in the tokenizezr analysis (this is originally from xlnet_preprocess.py)
+def calculate_oov_statistics(count_unknowns, lengths, max_seq_length):
+	included_tokens = [min(length, max_seq_length) for length in lengths]
+	per_example_oov = [count_unknowns[i]/included_tokens[i] for i in range(len(included_tokens))]
+	logger.info(stats.describe(np.array(per_example_oov)))
+	return per_example_oov
+
+
 def main():
 
 	# Section: Set device for PyTorch
