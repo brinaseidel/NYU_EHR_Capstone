@@ -114,7 +114,6 @@ def convert_examples_to_features(examples, max_seq_length,
 	for (doc_id, example) in enumerate(examples):
 		if doc_id % 10000 == 0:
 			logger.info("Writing example %d of %d" % (doc_id, len(examples)))
-
 		tokens_a = tokenizer.tokenize(example.text_a)
 
 		if sliding_window == False:
@@ -153,13 +152,11 @@ def convert_examples_to_features(examples, max_seq_length,
 			input_ids_list = []
 			input_mask_list = []
 			segment_ids_list = []
-			doc_id_list = []
 			for i in range(n_splits):
 				input_ids, input_mask, segment_ids = add_special_tokens(tokens_a_list[i])
 				input_ids_list.append(input_ids)
 				input_mask_list.append(input_mask)
 				segment_ids_list.append(segment_ids)
-				doc_id_list.append(doc_id)
 
 			# Pre-process labels
 			icd_id, unk = ICD2Idx(example.label.split() , label_map)
@@ -176,8 +173,7 @@ def convert_examples_to_features(examples, max_seq_length,
 								  input_mask = torch.tensor(input_mask_list[i], dtype=torch.int8),
 								  segment_ids = torch.tensor(segment_ids_list[i], dtype=torch.int8),
 								  label_id= torch.tensor(binary_label_list[i], dtype=torch.int8),
-								  doc_id= torch.tensor(doc_id_list[i], dtype=torch.int8)))
-
+								  doc_id= torch.tensor([doc_id], dtype=torch.int64)))
 
 	return features
 
@@ -238,7 +234,6 @@ def main():
 	all_label_ids = torch.stack([f.label_id for f in features])
 	if args.sliding_window:
 		all_doc_ids = torch.stack([f.doc_id for f in features])
-
 	torch.save(all_input_ids , os.path.join(feature_save_path, args.set_type + '_input_ids.pt'))
 	torch.save(all_input_mask , os.path.join(feature_save_path, args.set_type + '_input_mask.pt'))
 	torch.save(all_segment_ids , os.path.join(feature_save_path, args.set_type + '_segment_ids.pt'))

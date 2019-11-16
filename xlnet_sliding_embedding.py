@@ -26,8 +26,7 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	doc_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_ids.pt'))
 	data = TensorDataset(input_ids, input_mask, segment_ids, labels, doc_ids)
 
-	# Note: Possible to use SequentialSampler for eval, run time might be better
-	sampler = RandomSampler(data)
+	sampler = SequentialSampler(data)
 
 	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
 
@@ -99,7 +98,6 @@ def main():
 			segment_ids = segment_ids.to(device).long()
 			doc_ids = doc_ids.to(device).float()
 			label_ids = label_ids.to(device).float()
-
 			transformer_outputs = model.module.transformer(input_ids = input_ids, 
 													token_type_ids=segment_ids,
 													input_mask=input_mask)
@@ -113,21 +111,24 @@ def main():
 			all_doc_ids = torch.cat([all_doc_ids, doc_ids], dim = 0)
 			all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
 
-	print("summaries shape = ", summaries.size())
-
 	# Average the representation of the CLS token for all examples from the same document
 	mask = torch.zeros(int(all_doc_ids.max().item())+1, len(summaries))
 	mask[all_doc_ids.long(), torch.arange(len(summaries))] = 1
-	averaging_matrix = torch.nn.functional.normalize(mask, p=1, dim=1)
+	averaging_matrix = torch.nn.functional.normalize(mask, p=1, dim=1).to(device)
 	mean_summaries = torch.mm(averaging_matrix, summaries)
-	print(summaries)
-	print(all_doc_ids)
-	print(mean_summaries)
-	print(mean_summaries.size())
-	
 
-			
+	# Create an object storing one copy of the labels per document
+	last_doc_id = 0
+	label_ids = torch.empty(0, all_label_ids.size()[1]).to(device)
+	for (i, doc_id) in enumerate(all_doc_ids):
+		if doc_id.item() != last_doc_id:
+			torch.cat([label_ids, all_label_ids[i].unsqueeze(0)])
+			last_doc_id = doc_id.item()
 
+
+	# Save the embedded representations of the document, along with the labels
+	torch.save(mean_summaries, os.path.join(feature_save_path, args.set_type + '_summaries.pt'))
+	torch.save(label_ids, os.path.join(feature_save_path, args.set_type + '_doc_label_ids.pt')) # label_ids.pt has one record per window (and thus multiple records per document)	
 
 	return
 
