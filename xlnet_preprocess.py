@@ -64,11 +64,12 @@ def loadICDDict(path, minCount = 1000):
 class InputFeatures(object):
 	"""A single set of features of data."""
 
-	def __init__(self, input_ids, input_mask, segment_ids, label_id):
+	def __init__(self, input_ids, input_mask, segment_ids, label_id, doc_id=None):
 		self.input_ids = input_ids
 		self.input_mask = input_mask
 		self.segment_ids = segment_ids
 		self.label_id = label_id
+		self.doc_id = doc_id
 
 def ICD2Idx(lsICD, dict):
 	# Map icd code to index given dictionary, remove unknowns and duplicates
@@ -90,11 +91,9 @@ def convert_examples_to_features(examples, max_seq_length,
 	unk_id = tokenizer.convert_tokens_to_ids(unk_token)
 
 	def add_special_tokens(tokens):
-
 		# Add tokens for start and end of sequence
 		tokens = ["<cls>"] + tokens + ["<sep>"]
 		segment_ids = [0] * len(tokens)
-
 		input_ids = tokenizer.convert_tokens_to_ids(tokens)
 		# The mask has 1 for real tokens and 0 for padding tokens. Only real tokens are attended to.
 		input_mask = [1] * len(input_ids)
@@ -144,12 +143,11 @@ def convert_examples_to_features(examples, max_seq_length,
 		else:
 
 			# Split tokens into windows of size max_seq_length, accounting for [CLS] and [SEP] with "- 2"
-			n_splits = np.ceil(len(tokens_a)/(max_seq_length-2))
-			print("n_splits: ", n_splits)
+			n_splits = int(np.ceil(len(tokens_a)/(max_seq_length-2)))
 			tokens_a_list = []
 			for i in range(n_splits-1):
 				tokens_a_list.append(tokens_a[i*(max_seq_length - 2):(i+1)*(max_seq_length - 2)]) 
-			tokens_a_list.append(tokens_a[i*(max_seq_length - 2):])
+			tokens_a_list.append(tokens_a[(n_splits-1)*(max_seq_length - 2):])
 
 			# Add special tokens and create ids, mask, and segment ids
 			input_ids_list = []
@@ -238,11 +236,16 @@ def main():
 	all_input_mask = torch.stack([f.input_mask for f in features])
 	all_segment_ids = torch.stack([f.segment_ids for f in features])
 	all_label_ids = torch.stack([f.label_id for f in features])
+	if args.sliding_window:
+		all_doc_ids = torch.stack([f.doc_id for f in features])
 
 	torch.save(all_input_ids , os.path.join(feature_save_path, args.set_type + '_input_ids.pt'))
 	torch.save(all_input_mask , os.path.join(feature_save_path, args.set_type + '_input_mask.pt'))
 	torch.save(all_segment_ids , os.path.join(feature_save_path, args.set_type + '_segment_ids.pt'))
 	torch.save(all_label_ids , os.path.join(feature_save_path, args.set_type + '_labels.pt'))
+	if args.sliding_window:
+		torch.save(all_doc_ids , os.path.join(feature_save_path, args.set_type + '_doc_ids.pt'))
+
 
 if __name__ == "__main__":
 	main()

@@ -23,7 +23,8 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	input_mask = torch.load(os.path.join(feature_save_path, set_type + '_input_mask.pt'))
 	segment_ids = torch.load(os.path.join(feature_save_path, set_type + '_segment_ids.pt'))
 	labels = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
-	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
+	doc_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_ids.pt'))
+	data = TensorDataset(input_ids, input_mask, segment_ids, labels, doc_ids)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
 	sampler = RandomSampler(data)
@@ -84,17 +85,19 @@ def main():
 	model.to(device)
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
-	summaries = torch.empty(0,768)
-	summaries = summaries.to(device)
+	summaries = torch.empty(0, config.d_model).to(device)
+	all_doc_ids = torch.empty(0).to(device)
+	all_label_ids = torch.empty(0, 2292).to(device)
+
 	for i, batch in enumerate(test_dataloader):
 		model.eval()
 		with torch.no_grad():
-			input_ids, input_mask, segment_ids, label_ids = batch
+			input_ids, input_mask, segment_ids, label_ids, doc_ids = batch
 
 			input_ids = input_ids.to(device).long()
 			input_mask = input_mask.to(device).long()
 			segment_ids = segment_ids.to(device).long()
-
+			doc_ids = doc_ids.to(device).float()
 			label_ids = label_ids.to(device).float()
 
 			transformer_outputs = model.module.transformer(input_ids = input_ids, 
@@ -107,10 +110,21 @@ def main():
 			summary = summary.to(device)
 
 			summaries = torch.cat([summaries, summary], dim = 0)
+			all_doc_ids = torch.cat([all_doc_ids, doc_ids], dim = 0)
+			all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
 
 	print("summaries shape = ", summaries.size())
 
-
+	# Average the representation of the CLS token for all examples from the same document
+	mask = torch.zeros(int(all_doc_ids.max().item())+1, len(summaries))
+	mask[all_doc_ids.long(), torch.arange(len(summaries))] = 1
+	averaging_matrix = torch.nn.functional.normalize(mask, p=1, dim=1)
+	mean_summaries = torch.mm(averaging_matrix, summaries)
+	print(summaries)
+	print(all_doc_ids)
+	print(mean_summaries)
+	print(mean_summaries.size())
+	
 
 			
 
