@@ -84,7 +84,7 @@ def main():
 	model.to(device)
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
-	summaries = torch.empty()
+	summaries = torch.empty(0,0)
 
 	for i, batch in enumerate(test_dataloader):
 		model.eval()
