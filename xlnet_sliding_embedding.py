@@ -84,6 +84,8 @@ def main():
 	model.to(device)
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
+	summaries = torch.empty()
+
 	for i, batch in enumerate(test_dataloader):
 		model.eval()
 		with torch.no_grad():
@@ -100,12 +102,14 @@ def main():
 													input_mask=input_mask)
 			
 			output = transformer_outputs[0]
-			print("output shape", output.size())
-
 			# extracting the CLS token
 			summary = output[:,0]
-			print("CLS token", summary)
-			print("CLS token shape", summary.size())
+
+			summaries = torch.cat([summaries, summary], dim = 0)
+
+	print("summaries shape = ", summaries.size())
+
+
 
 			
 
