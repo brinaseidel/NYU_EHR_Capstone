@@ -49,7 +49,7 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 		# If using the sliding window classifier, get processed data
 		if sliding_window:
 			input_summaries, label_ids = batch
-			input_summaries = input_summaries.to(device).long()
+			input_summaries = input_summaries.to(device).float()
 			label_ids = label_ids.to(device).float()
 		else:
 			input_ids, input_mask, segment_ids, label_ids = batch

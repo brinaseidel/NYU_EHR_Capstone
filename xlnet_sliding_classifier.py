@@ -11,7 +11,8 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 from transformers import (XLNetForSequenceClassification, XLNetConfig)
 from xlnet_evaluation_old import (evaluate, macroAUC, topKPrecision)
 import random
-from transformers.optimization import (Adam, AdamW, WarmupLinearSchedule)
+import torch.optim as optim
+import torch.nn as nn
 from torch.nn import BCEWithLogitsLoss
 from sklearn import metrics
 import json
@@ -37,24 +38,24 @@ def set_seeds(seed, n_gpu):
 		torch.cuda.manual_seed_all(seed)
 
 class SlidingClassifier(torch.nn.Module):
-    def __init__(self, num_layers, hidden_size, p, input_size=768, num_codes=2292):
-        super(SlidingClassifier, self).__init__()
+	def __init__(self, num_layers, hidden_size, p, input_size=768, num_codes=2292):
+		super(SlidingClassifier, self).__init__()
 		self.transform_to_hidden = nn.Linear(input_size,hidden_size)
-        self.transforms = nn.ModuleList([nn.Linear(hidden_size, hidden_size)
-                                 for _ in range(num_layers)])
-        self.dropouts = nn.ModuleList([nn.Dropout(p=p)
-                                 for _ in range(num_layers)])
+		self.transforms = nn.ModuleList([nn.Linear(hidden_size, hidden_size) 
+						for _ in range(num_layers)])
+		self.sigmoid = nn.Sigmoid()
+		self.dropouts = nn.ModuleList([nn.Dropout(p=p)
+						for _ in range(num_layers)])
 		self.projection = nn.Linear(hidden_size, num_codes)
 
-    def forward(self, inp):
+	def forward(self, inp):
 		output = self.transform_to_hidden(inp)
 		for dropout, linear in zip(self.dropouts, self.transforms):
 			output = linear(output)
-			output = nn.Sigmoid(output)
+			output = self.sigmoid(output)
 			output = dropout(output)
 		output = self.projection(output)
-
-        return output
+		return output
 
 def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals'):
 	global_step = 0
@@ -82,7 +83,7 @@ def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, 
 			model.train()
 			input_summaries, label_ids = batch
 
-			input_summaries = input_summaries.to(device).long()
+			input_summaries = input_summaries.to(device).float()
 
 			# Might need to add .half() or .long() depending on amp versions
 			label_ids = label_ids.to(device).float()
@@ -94,9 +95,6 @@ def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, 
 
 			if n_gpu > 1:
 				loss = loss.mean()
-
-			# Prevent exploding gradients and set max gradient norm to 1
-			torch.nn.utils.clip_grad_norm(optimizer.parameters(), max_norm = 1)
 
 			train_loss += loss.item()
 			number_steps += 1
@@ -228,8 +226,8 @@ def main():
 	model = SlidingClassifier(num_layers=args.num_hidden_layers, hidden_size=args.hidden_size, p=args.drop_rate)
 
 	model.to(device)
-    model_parameters = [p for p in model.parameters()]
-    optimizer = optim.Adam(model_parameters, lr=args.learning_rate)
+	model_parameters = [p for p in model.parameters()]
+	optimizer = optim.Adam(model_parameters, lr=args.learning_rate)
 
 	logger.info("***** Running training *****")
 	logger.info("  Num batches = %d", len(train_dataloader))
