@@ -35,24 +35,34 @@ def topKPrecision(pred, true, k):
 	result = np.sum(true_sort[:,-k:].astype(np.float64)) / k / n_sample
 	return result
 
-def evaluate(dataloader, model, model_id, n_gpu, device):
+def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 	logger.info("***** Running evaluation *****")
 	logger.info("  Num batches = %d", len(dataloader))
 	eval_loss = 0.0
 	number_steps = 0
 	preds = []
 	target = []
-	
+
 	for batch in dataloader:
 		model.eval()
-		input_ids, input_mask, segment_ids, label_ids = batch
-		input_ids = input_ids.to(device).long()
-		input_mask = input_mask.to(device).long()
-		segment_ids = segment_ids.to(device).long()
-		label_ids = label_ids.to(device).float()
-		
+
+		# If using the sliding window classifier, get processed data
+		if sliding_window:
+			input_summaries, label_ids = batch
+			input_summaries = input_summaries.to(device).long()
+			label_ids = label_ids.to(device).float()
+		else:
+			input_ids, input_mask, segment_ids, label_ids = batch
+			input_ids = input_ids.to(device).long()
+			input_mask = input_mask.to(device).long()
+			segment_ids = segment_ids.to(device).long()
+			label_ids = label_ids.to(device).float()
+
 		with torch.no_grad():
-			logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
+			if sliding_window:
+				logits = model(inp=input_summaries)
+			else:
+				logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
 		criterion = BCEWithLogitsLoss()
 		loss = criterion(logits, label_ids)
 
@@ -72,7 +82,7 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 	eval_loss = eval_loss / number_steps
 	preds = torch.cat(preds).numpy()
 	target = torch.cat(target).byte().numpy()
-	
+
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
 	macro_AUC = macroAUC(preds, target)
 	top1_precision = topKPrecision(preds, target, k = 1)
@@ -83,12 +93,12 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
 	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
 
-	results = { 
-				'loss': eval_loss,  
+	results = {
+				'loss': eval_loss,
 				'micro_AUC' : micro_AUC ,
-				'macro_AUC' : macro_AUC, 
-				'top1_precision' : top1_precision , 
-				'top3_precision' : top3_precision , 
+				'macro_AUC' : macro_AUC,
+				'top1_precision' : top1_precision ,
+				'top3_precision' : top3_precision ,
 				'top5_precision' : top5_precision
 				}
 
@@ -111,12 +121,12 @@ def evaluate(dataloader, model, model_id, n_gpu, device):
 
 
 
-		
-		
+
+
 
 def main():
 
-	# TODO: Add all main methods 
+	# TODO: Add all main methods
 	return
 
 if __name__ == "__main__":
