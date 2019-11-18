@@ -207,10 +207,10 @@ def main():
 						default="base",
 						type=str,
 						help="Whether to use the xlnet base model or the xlnet large model")
-        parser.add_argument("--learning rate",
-                                                default=4e-5,
-                                                type=float,
-                                                help="Learning rate for optimizer")
+		parser.add_argument("--learning rate",
+												default=4e-5,
+												type=float,
+												help="Learning rate for optimizer")
 	args = parser.parse_args()
 
 	# Set random seed
