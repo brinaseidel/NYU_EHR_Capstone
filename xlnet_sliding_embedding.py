@@ -122,7 +122,7 @@ def main():
 	label_ids = torch.empty(0, all_label_ids.size()[1]).to(device)
 	for (i, doc_id) in enumerate(all_doc_ids):
 		if doc_id.item() != last_doc_id:
-			torch.cat([label_ids, all_label_ids[i].unsqueeze(0)])
+			label_ids = torch.cat([label_ids, all_label_ids[i].unsqueeze(0)])
 			last_doc_id = doc_id.item()
 
 
