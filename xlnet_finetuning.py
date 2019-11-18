@@ -48,7 +48,7 @@ def initialize_optimizer(model, train_dataloader, args):
 		{'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0},
 		{'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0}
 		]
-	optimizer = AdamW(optimizer_grouped_parameters, lr=4e-5, eps=1e-8)
+	optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=1e-8)
 	model, optimizer = amp.initialize(model, optimizer, opt_level= 'O1')
 	scheduler = WarmupLinearSchedule(optimizer, warmup_steps=0, t_total=len(train_dataloader)*args.num_train_epochs)
 	return optimizer, scheduler, model
@@ -207,6 +207,10 @@ def main():
 						default="base",
 						type=str,
 						help="Whether to use the xlnet base model or the xlnet large model")
+        parser.add_argument("--learning rate",
+                                                default=4e-5,
+                                                type=float,
+                                                help="Learning rate for optimizer")
 	args = parser.parse_args()
 
 	# Set random seed
