@@ -118,7 +118,7 @@ def main():
 	mean_summaries = torch.mm(averaging_matrix, summaries)
 
 	# Create an object storing one copy of the labels per document
-	last_doc_id = 0
+	last_doc_id = -1
 	label_ids = torch.empty(0, all_label_ids.size()[1]).to(device)
 	for (i, doc_id) in enumerate(all_doc_ids):
 		if doc_id.item() != last_doc_id:
