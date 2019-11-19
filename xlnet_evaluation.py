@@ -144,12 +144,15 @@ def main():
 	parser.add_argument("--feature_save_dir",
 						type=str,
 						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/{feature_save_dir}'. ")
+	parser.add_argument("--set_type",
+						type=str,
+						help="Specify train/val/test")
 	args = parser.parse_args()
 
 	# Load training data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading test dataset")
-	test_dataloader = load_featurized_examples(batch_size=32, set_type = "test", feature_save_path=feature_save_path)
+	test_dataloader = load_featurized_examples(batch_size=32, set_type = args.set_type, feature_save_path=feature_save_path)
 
 	# Load saved model
 	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', args.model_id, 'model_checkpoint_'+args.checkpoint)
@@ -160,7 +163,7 @@ def main():
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
 	eval_folder = '/gpfs/data/razavianlab/capstone19/evals'
-	val_file_name = os.path.join(eval_folder, args.model_id + "_test_metrics.p")
+	val_file_name = os.path.join(eval_folder, args.model_id + "_{}_{}_metrics.p".format(args.checkpoint, args.set_type))
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
 	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'macro_AUC_list'])
 	# Run evaluation
