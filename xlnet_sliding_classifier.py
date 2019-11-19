@@ -38,12 +38,15 @@ def set_seeds(seed, n_gpu):
 		torch.cuda.manual_seed_all(seed)
 
 class SlidingClassifier(torch.nn.Module):
-	def __init__(self, num_layers, hidden_size, p, input_size=768, num_codes=2292):
+	def __init__(self, num_layers, hidden_size, p, input_size=768, num_codes=2292, activation_function='sigmoid'):
 		super(SlidingClassifier, self).__init__()
+		self.activation_function = activation_function
+
 		self.transform_to_hidden = nn.Linear(input_size,hidden_size)
-		self.transforms = nn.ModuleList([nn.Linear(hidden_size, hidden_size) 
+		self.transforms = nn.ModuleList([nn.Linear(hidden_size, hidden_size)
 						for _ in range(num_layers)])
-		self.sigmoid = nn.Sigmoid()
+		if activation_function == 'sigmoid':
+			self.activation = nn.Sigmoid()
 		self.dropouts = nn.ModuleList([nn.Dropout(p=p)
 						for _ in range(num_layers)])
 		self.projection = nn.Linear(hidden_size, num_codes)
@@ -52,7 +55,8 @@ class SlidingClassifier(torch.nn.Module):
 		output = self.transform_to_hidden(inp)
 		for dropout, linear in zip(self.dropouts, self.transforms):
 			output = linear(output)
-			output = self.sigmoid(output)
+			if self.activation_function is not None:
+				output = self.activation(output)
 			output = dropout(output)
 		output = self.projection(output)
 		return output
@@ -182,6 +186,10 @@ def main():
 						default=0.3,
 						type=float,
 						help="Droprate in between hidden layers for MLP classifer")
+	parser.add_argument("--activation_function",
+						default='sigmoid',
+						type=str,
+						help="Activation function for MLP classifer")
 	parser.add_argument("--learning_rate",
 						default=0.0001,
 						type=float,
@@ -210,6 +218,9 @@ def main():
 						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/feature_save_dir'. ")
 	args = parser.parse_args()
 
+	if args.activation_function == 'None':
+		args.activation_function = None
+
 	# Set random seed
 	set_seeds(seed = args.seed, n_gpu = n_gpu)
 
@@ -223,7 +234,7 @@ def main():
 	# Load pretrained model
 	num_train_optimization_steps = args.num_train_epochs * len(train_dataloader)
 
-	model = SlidingClassifier(num_layers=args.num_hidden_layers, hidden_size=args.hidden_size, p=args.drop_rate)
+	model = SlidingClassifier(num_layers=args.num_hidden_layers, hidden_size=args.hidden_size, p=args.drop_rate, activation_function=args.activation_function)
 
 	model.to(device)
 	model_parameters = [p for p in model.parameters()]
