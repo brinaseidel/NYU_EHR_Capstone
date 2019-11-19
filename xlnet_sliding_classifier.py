@@ -23,7 +23,9 @@ def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	if os.path.exists(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt')):
 		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt'))
 	else:
-		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_label_ids.pt'))
+		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+	print("summaries size",input_summaries.size())
+	print("label_ids size",label_ids.size())
 	data = TensorDataset(input_summaries, label_ids)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
