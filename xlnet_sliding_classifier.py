@@ -20,7 +20,10 @@ import pickle
 
 def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries.pt'))
-	label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt'))
+	if os.path.exists(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt')):
+		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt'))
+	else:
+		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_label_ids.pt'))
 	data = TensorDataset(input_summaries, label_ids)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
