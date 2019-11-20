@@ -93,8 +93,12 @@ def main():
 			summary = summary.to(device)
 
 			summaries = torch.cat([summaries, summary], dim = 0)
+			
+			if i%1000 == 0 and i > 0:
+				logger.info("Embedded and summarized batch {} of {}".format(i, len(dataloader)))
 
 	# Save the embedded representations of the document, along with the labels
+	logger.info("Saving summaries...")
 	torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries.pt'))
 	return
 
