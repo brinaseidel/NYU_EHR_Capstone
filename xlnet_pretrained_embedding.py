@@ -26,9 +26,9 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
-	sampler = RandomSampler(data)
+	sampler = SequentialSampler(data)
 
-	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
+	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = False)
 
 	return dataloader
 
