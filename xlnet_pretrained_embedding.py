@@ -26,9 +26,9 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
-	sampler = RandomSampler(data)
+	sampler = SequentialSampler(data)
 
-	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
+	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = False)
 
 	return dataloader
 
@@ -93,8 +93,12 @@ def main():
 			summary = summary.to(device)
 
 			summaries = torch.cat([summaries, summary], dim = 0)
+			
+			if i%1000 == 0 and i > 0:
+				logger.info("Embedded and summarized batch {} of {}".format(i, len(dataloader)))
 
 	# Save the embedded representations of the document, along with the labels
+	logger.info("Saving summaries...")
 	torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries.pt'))
 	return
 
