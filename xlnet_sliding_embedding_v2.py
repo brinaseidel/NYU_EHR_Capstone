@@ -38,14 +38,15 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	segment_ids_sample = segment_ids[indices]
 	labels_sample = labels[indices]
 	doc_ids_sample = doc_ids[indices]
-		
+	doc_ids_sample = pd.factorize(doc_ids_sample.numpy().flatten())[0]
+	doc_ids_sample = torch.from_numpy(doc_ids_sample)
 	data = TensorDataset(input_ids_sample, input_mask_sample, segment_ids_sample, labels_sample, doc_ids_sample)
 
 	sampler = SequentialSampler(data)
 
 	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
 
-	return dataloader, indices
+	return dataloader
 		
 
 def main():
@@ -89,7 +90,7 @@ def main():
 	# Load training data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading test dataset")
-	test_dataloader, indices = load_featurized_examples(batch_size=32, set_type = args.set_type, feature_save_path=feature_save_path)
+	test_dataloader = load_featurized_examples(batch_size=32, set_type = args.set_type, feature_save_path=feature_save_path)
 
 	# Load saved model
 	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', args.model_id, 'model_checkpoint_'+args.checkpoint)
@@ -126,13 +127,10 @@ def main():
 			all_doc_ids = torch.cat([all_doc_ids, doc_ids], dim = 0)
 			all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
 	
-	print("all_doc_ids shape", all_doc_ids.size())
-	print("all label_ids shape", all_label_ids.size())
-	print("number of unique documents", len(set(list(all_doc_ids.cpu().numpy().flatten()))))
 	
 	# Average the representation of the CLS token for all examples from the same document
-	mask = torch.zeros(len(set(list(all_doc_ids.cpu().numpy().flatten()))), len(summaries))
-	mask[indices, torch.arange(len(summaries))] = 1
+	mask = torch.zeros(int(all_doc_ids.max().item())+1, len(summaries))
+	mask[all_doc_ids.long(), torch.arange(len(summaries))] = 1
 	averaging_matrix = torch.nn.functional.normalize(mask, p=1, dim=1).to(device)
 	mean_summaries = torch.mm(averaging_matrix, summaries)
 	print("mean summaries.shape", mean_summaries.size())
@@ -144,7 +142,7 @@ def main():
 			label_ids = torch.cat([label_ids, all_label_ids[i].unsqueeze(0)])
 			last_doc_id = doc_id.item()
 
-
+	print('label_ids shape', label_ids.size())
 	# Save the embedded representations of the document, along with the labels
 	torch.save(mean_summaries, os.path.join(feature_save_path, args.set_type + '_summaries.pt'))
 	torch.save(label_ids, os.path.join(feature_save_path, args.set_type + '_doc_label_ids.pt')) # label_ids.pt has one record per window (and thus multiple records per document)	
