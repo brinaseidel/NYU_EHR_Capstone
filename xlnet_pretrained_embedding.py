@@ -17,6 +17,7 @@ from tqdm import tqdm
 from torch.nn import BCEWithLogitsLoss
 import json
 import pickle
+import math
 
 def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
@@ -25,7 +26,6 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	labels = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
 	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
 
-	# Note: Possible to use SequentialSampler for eval, run time might be better
 	sampler = SequentialSampler(data)
 
 	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = False)
@@ -68,7 +68,7 @@ def main():
 	dataloader = load_featurized_examples(batch_size=32, set_type = args.set_type, feature_save_path=feature_save_path)
 
 	# Load saved model
-	config = XLNetConfig.from_pretrained('xlnet-base-cased', num_labels=2292) # TODO: check if we need this
+	config = XLNetConfig.from_pretrained('xlnet-base-cased', num_labels=2292)
 	model = XLNetForSequenceClassification.from_pretrained('xlnet-base-cased', config=config)
 	model.to(device)
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
@@ -97,9 +97,17 @@ def main():
 			if i%1000 == 0 and i > 0:
 				logger.info("Embedded and summarized batch {} of {}".format(i, len(dataloader)))
 
-	# Save the embedded representations of the document, along with the labels
-	logger.info("Saving summaries...")
-	torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries.pt'))
+		# Save the embedded representations of the document every 50,000 batches to save memory
+		if i%50000 == 0 and i >0:
+			logger.info("Saving summaries...")
+			torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(i/50000)))
+			summaries = torch.empty(0, config.d_model).to(device)
+
+	# Save any remaining embedded representations
+	if i%50000 != 0:
+		logger.info("Saving summaries...")
+		torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(math.ceil(i/50000)))))
+	
 	return
 
 if __name__ == "__main__":
