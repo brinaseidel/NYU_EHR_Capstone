@@ -17,19 +17,40 @@ from torch.nn import BCEWithLogitsLoss
 from sklearn import metrics
 import json
 import pickle
+import math
 
-def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
-	input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries.pt'))
+def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/', batch=False):
+	
+	# Read in the correct batch if needed
+	if batch==False:
+		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries.pt'))
+	else:
+		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(batch)))
+	print("input_summaries shape: ", input_summaries.size())
+
+	# Read in the corresponding labels
 	if os.path.exists(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt')):
 		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt'))
 	else:
 		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+	print("label_ids shape ", label_ids.size())
+
+	# For data saved in batches, keep only the labels that correspond to this batch
+	if batch!=False:
+		
+		n_input_summaries = len(input_summaries)
+		if n_input_summaries < 50000:
+			label_ids = label_ids[n_input_summaries:, :]
+		else:
+			label_ids = label_ids[(batch-1)*n_input_summaries:(batch)*n_input_summaries:, :]
+		print("chopped label_ids size: ", label_ids.size())
+	
 	data = TensorDataset(input_summaries, label_ids)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
 	sampler = RandomSampler(data)
 
-	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
+	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = False)
 
 	return dataloader
 
@@ -64,7 +85,7 @@ class SlidingClassifier(torch.nn.Module):
 		output = self.projection(output)
 		return output
 
-def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals'):
+def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_batches=1):
 	global_step = 0
 
 	# Get path to the file where we will save train performance
@@ -86,58 +107,62 @@ def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, 
 	for epoch in range(num_train_epochs):
 		train_loss = 0
 		number_steps = 0
-		for i, batch in enumerate(train_dataloader):
-			model.train()
-			input_summaries, label_ids = batch
+		for saved_batch in range(n_batches):
+			if n_batches > 1:
+				logger.info("Loading batch {} of training data".format(saved_batch))
+				train_dataloader = load_summarized_examples(args.batch_size, set_type = "train", feature_save_path=feature_save_path, batch=saved_batch)
+			for i, batch in enumerate(train_dataloader):
+				model.train()
+				input_summaries, label_ids = batch
 
-			input_summaries = input_summaries.to(device).float()
+				input_summaries = input_summaries.to(device).float()
 
-			# Might need to add .half() or .long() depending on amp versions
-			label_ids = label_ids.to(device).float()
+				# Might need to add .half() or .long() depending on amp versions
+				label_ids = label_ids.to(device).float()
 
-			logits = model(inp=input_summaries)
+				logits = model(inp=input_summaries)
 
-			criterion = BCEWithLogitsLoss()
-			loss = criterion(logits, label_ids)
+				criterion = BCEWithLogitsLoss()
+				loss = criterion(logits, label_ids)
 
-			if n_gpu > 1:
-				loss = loss.mean()
+				if n_gpu > 1:
+					loss = loss.mean()
 
-			train_loss += loss.item()
-			number_steps += 1
-			mean_loss = train_loss/number_steps
+				train_loss += loss.item()
+				number_steps += 1
+				mean_loss = train_loss/number_steps
 
-			optimizer.step()
-			model.zero_grad()
+				optimizer.step()
+				model.zero_grad()
 
-			global_step += 1
+				global_step += 1
 
-			# Log training loss
-			if train_logging_step > 0 and global_step % train_logging_step == 0:
-				logger.info("Training loss (Epoch {0}, Global Step {1}): {2:.5f}".format(epoch, global_step, mean_loss))
-				train_results = train_results.append(pd.DataFrame({'loss': mean_loss}, index=[global_step]))
-				pickle.dump(train_results, open(train_file_name, "wb"))
-				os.system("chgrp razavianlab {}".format(train_file_name))
-				#os.chmod(train_file_name, stat.S_IRWXG)
-			# Log validtion metrics
-			if val_logging_step > 0 and global_step % val_logging_step == 0:
-				# TODO: change to new evaluate functio
-				results = evaluate(dataloader = val_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device, sliding_window=True)
-				val_results = val_results.append(pd.DataFrame(results, index=[global_step]))
-				pickle.dump(val_results, open(val_file_name, "wb"))
-				os.system("chgrp razavianlab {}".format(val_file_name))
-			# Save a copy of the model every save_step
-			if save_step > 0 and global_step % save_step == 0:
-				# Save model and optimizer checkpoints
-				checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(int(global_step/save_step)))
+				# Log training loss
+				if train_logging_step > 0 and global_step % train_logging_step == 0:
+					logger.info("Training loss (Epoch {0}, Global Step {1}): {2:.5f}".format(epoch, global_step, mean_loss))
+					train_results = train_results.append(pd.DataFrame({'loss': mean_loss}, index=[global_step]))
+					pickle.dump(train_results, open(train_file_name, "wb"))
+					os.system("chgrp razavianlab {}".format(train_file_name))
+					#os.chmod(train_file_name, stat.S_IRWXG)
+				# Log validtion metrics
+				if val_logging_step > 0 and global_step % val_logging_step == 0:
+					# TODO: change to new evaluate functio
+					results = evaluate(dataloader = val_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device, sliding_window=True)
+					val_results = val_results.append(pd.DataFrame(results, index=[global_step]))
+					pickle.dump(val_results, open(val_file_name, "wb"))
+					os.system("chgrp razavianlab {}".format(val_file_name))
+				# Save a copy of the model every save_step
+				if save_step > 0 and global_step % save_step == 0:
+					# Save model and optimizer checkpoints
+					checkpoint_save_path = os.path.join(model_save_path, 'model_checkpoint_{}'.format(int(global_step/save_step)))
 
-				if not os.path.exists(checkpoint_save_path):
-					os.makedirs(checkpoint_save_path)
+					if not os.path.exists(checkpoint_save_path):
+						os.makedirs(checkpoint_save_path)
 
-				torch.save({'model':model.state_dict(),
-							'optimizer':optimizer.state_dict(),
-							'step': global_step}, os.path.join(checkpoint_save_path, 'model.pt'))
-				logger.info("Saving model checkpoint to {}".format(checkpoint_save_path))
+					torch.save({'model':model.state_dict(),
+								'optimizer':optimizer.state_dict(),
+								'step': global_step}, os.path.join(checkpoint_save_path, 'model.pt'))
+					logger.info("Saving model checkpoint to {}".format(checkpoint_save_path))
 
 	# Save model and optimizer checkpoints
 	final_save_path = os.path.join(model_save_path, 'model_checkpoint_final')
@@ -219,6 +244,9 @@ def main():
 	parser.add_argument("--feature_save_dir",
 						type=str,
 						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/feature_save_dir'. ")
+	parser.add_argument("--batched_data",
+						type=bool,
+						help="True/False indicating whether the summarized data has been saved in batches")
 	args = parser.parse_args()
 
 	if args.activation_function == 'None':
@@ -227,10 +255,23 @@ def main():
 	# Set random seed
 	set_seeds(seed = args.seed, n_gpu = n_gpu)
 
-	# Load data
+	# If data was saved in batches, determine how many batches there should be 
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
-	logger.info("Loading train dataset")
-	train_dataloader = load_summarized_examples(args.batch_size, set_type = "train", feature_save_path=feature_save_path)
+	if args.batched_data:
+		if os.path.exists(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt')):
+			label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt'))
+		else:
+			label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+		n_batches = math.ceil(len(label_ids)/50000)
+	else:
+		n_batches = 1
+
+	
+	# Load training dataset if data has not been saved in batches; if it has, we will load training data repeatedly in batches during training
+	if args.batched_data == False:
+		logger.info("Loading train dataset")
+		train_dataloader = load_summarized_examples(args.batch_size, set_type = "train", feature_save_path=feature_save_path)
+	# Load val dataset
 	logger.info("Loading validation dataset")
 	val_dataloader = load_summarized_examples(args.batch_size, set_type = "val", feature_save_path=feature_save_path)
 
@@ -244,13 +285,11 @@ def main():
 	optimizer = optim.Adam(model_parameters, lr=args.learning_rate)
 
 	logger.info("***** Running training *****")
-	logger.info("  Num batches = %d", len(train_dataloader))
 	logger.info("  Num Epochs = %d", args.num_train_epochs)
 	logger.info("  Total train batch size  = %d", args.batch_size)
-	logger.info("  Total optimization steps = %d", len(train_dataloader)*args.num_train_epochs)
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step)
+	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=n_batches)
 
 
 if __name__ == "__main__":

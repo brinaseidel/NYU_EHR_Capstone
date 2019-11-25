@@ -100,7 +100,7 @@ def main():
 		# Save the embedded representations of the document every 50,000 batches to save memory
 		if i%50000 == 0 and i >0:
 			logger.info("Saving summaries...")
-			torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(i/50000)))
+			torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(i/50000))))
 			summaries = torch.empty(0, config.d_model).to(device)
 
 	# Save any remaining embedded representations
