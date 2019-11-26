@@ -28,17 +28,14 @@ def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(batch)))
 
 	# Read in the corresponding labels
-	if os.path.exists(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt')):
-		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids.pt'))
-	else:
-		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+	label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
 
 	# For data saved in batches, keep only the labels that correspond to this batch
 	if batch!=False:
 		
 		n_input_summaries = len(input_summaries)
-		if n_input_summaries < 50000:
-			label_ids = label_ids[n_input_summaries:, :]
+		if n_input_summaries < (32*50000): # each file except the last one has 32*50000 examples in it; the last one may have fuewer
+			label_ids = label_ids[-n_input_summaries:, :]
 		else:
 			label_ids = label_ids[(batch-1)*n_input_summaries:(batch)*n_input_summaries:, :]
 	
@@ -82,7 +79,14 @@ class SlidingClassifier(torch.nn.Module):
 		output = self.projection(output)
 		return output
 
-def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_batches=1, batch_size=32, feature_save_path=""):
+def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_batches=1, batch_size=32, feature_save_path=""):
+	
+
+	logger.info("***** Running training *****")
+	logger.info("  Num Epochs = %d", args.num_train_epochs)
+	logger.info("  Num Train Examples = %d", n_train_examples)
+	logger.info("  Total train batch size  = %d", args.batch_size)
+
 	global_step = 0
 
 	# Get path to the file where we will save train performance
@@ -105,10 +109,9 @@ def train(train_dataloader, val_dataloader, model, optimizer, num_train_epochs, 
 		train_loss = 0
 		number_steps = 0
 		for saved_batch in range(1, 1+n_saved_batches):
-			if n_saved_batches > 1:
-				logger.info("Loading batch {} of training data".format(saved_batch))
-				train_dataloader = [] # to avoid storing multiple dataloaders in memory at the same time
-				train_dataloader = load_summarized_examples(batch_size, set_type = "train", feature_save_path=feature_save_path, batch=saved_batch)
+			logger.info("Loading batch {} of training data".format(saved_batch))
+			train_dataloader = [] # to avoid storing multiple dataloaders in memory at the same time
+			train_dataloader = load_summarized_examples(batch_size, set_type = "train", feature_save_path=feature_save_path, batch=saved_batch)
 				
 			for i, batch in enumerate(train_dataloader):
 				model.train()
@@ -244,9 +247,6 @@ def main():
 	parser.add_argument("--feature_save_dir",
 						type=str,
 						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/feature_save_dir'. ")
-	parser.add_argument("--batched_data",
-						type=bool,
-						help="True/False indicating whether the summarized data has been saved in batches")
 	args = parser.parse_args()
 
 	if args.activation_function == 'None':
@@ -257,25 +257,9 @@ def main():
 
 	# If data was saved in batches, determine how many batches there should be 
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
-	if args.batched_data:
-		if os.path.exists(os.path.join(feature_save_path, 'train_doc_label_ids.pt')):
-			label_ids = torch.load(os.path.join(feature_save_path, 'train_doc_label_ids.pt'))
-		else:
-			label_ids = torch.load(os.path.join(feature_save_path, 'train_labels.pt'))
-		n_batches = math.ceil(len(label_ids)/args.batch_size/50000)
-	else:
-		n_batches = 1
+	label_ids = torch.load(os.path.join(feature_save_path, 'train_labels.pt'))
+	n_batches = math.ceil(len(label_ids)/(32*50000)) # Each saved file has 50,000 batches of size 32
 
-	
-	# Load full training dataset if data has not been saved in batches; if it has, we will load training data repeatedly in batches during training
-	if args.batched_data == False:
-		logger.info("Loading train dataset")
-		train_dataloader = load_summarized_examples(args.batch_size, set_type = "train", feature_save_path=feature_save_path)
-		n_train_examples = len(train_dataloader)*args.batch_size
-	else:
-		logger.info("Loading one batch of train dataset")
-		train_dataloader = load_summarized_examples(args.batch_size, set_type = "train", feature_save_path=feature_save_path, batch=1)
-		n_train_examples = len(label_ids)
 	# Load val dataset
 	logger.info("Loading validation dataset")
 	val_dataloader = load_summarized_examples(args.batch_size, set_type = "val", feature_save_path=feature_save_path)
@@ -287,13 +271,8 @@ def main():
 	model_parameters = [p for p in model.parameters()]
 	optimizer = optim.Adam(model_parameters, lr=args.learning_rate)
 
-	logger.info("***** Running training *****")
-	logger.info("  Num Epochs = %d", args.num_train_epochs)
-	logger.info("  Num Train Examples = %d", n_train_examples)
-	logger.info("  Total train batch size  = %d", args.batch_size)
-
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(train_dataloader = train_dataloader, val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=n_batches, batch_size=args.batch_size, feature_save_path=feature_save_path)
+	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=n_batches, batch_size=args.batch_size, feature_save_path=feature_save_path)
 
 
 if __name__ == "__main__":
