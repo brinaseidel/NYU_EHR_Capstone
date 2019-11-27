@@ -21,24 +21,11 @@ import math
 
 def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/', batch=False):
 	
-	# Read in the correct batch if needed
-	if batch==False:
-		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries.pt'))
-	else:
-		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(batch)))
-
+	# Read in the correct batch
+	input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(batch)))
 	# Read in the corresponding labels
-	label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+	label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels_{}.pt'.format(batch)))
 
-	# For data saved in batches, keep only the labels that correspond to this batch
-	if batch!=False:
-		
-		n_input_summaries = len(input_summaries)
-		if n_input_summaries < (32*50000): # each file except the last one has 32*50000 examples in it; the last one may have fuewer
-			label_ids = label_ids[-n_input_summaries:, :]
-		else:
-			label_ids = label_ids[(batch-1)*n_input_summaries:(batch)*n_input_summaries:, :]
-	
 	data = TensorDataset(input_summaries, label_ids)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
@@ -247,6 +234,9 @@ def main():
 	parser.add_argument("--feature_save_dir",
 						type=str,
 						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/feature_save_dir'. ")
+	parser.add_argument("--n_saved_files",
+						type=int,
+						help="Saved data has been split into this many files'. ")
 	args = parser.parse_args()
 
 	if args.activation_function == 'None':
@@ -255,12 +245,9 @@ def main():
 	# Set random seed
 	set_seeds(seed = args.seed, n_gpu = n_gpu)
 
-	# If data was saved in batches, determine how many batches there should be 
-	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
-	label_ids = torch.load(os.path.join(feature_save_path, 'train_labels.pt'))
-	n_batches = math.ceil(len(label_ids)/(32*50000)) # Each saved file has 50,000 batches of size 32
 
 	# Load val dataset
+	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading validation dataset")
 	val_dataloader = load_summarized_examples(args.batch_size, set_type = "val", feature_save_path=feature_save_path)
 
@@ -272,7 +259,7 @@ def main():
 	optimizer = optim.Adam(model_parameters, lr=args.learning_rate)
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=n_batches, batch_size=args.batch_size, feature_save_path=feature_save_path)
+	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=args.n_saved_files, batch_size=args.batch_size, feature_save_path=feature_save_path)
 
 
 if __name__ == "__main__":
