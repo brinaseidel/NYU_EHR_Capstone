@@ -74,7 +74,7 @@ def main():
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
 	summaries = torch.empty(0, config.d_model).to(device)
-
+	labels= torch.empty(0, config.num_labels).to(device)
 	for i, batch in enumerate(dataloader):
 		model.eval()
 		with torch.no_grad():
@@ -83,6 +83,7 @@ def main():
 			input_ids = input_ids.to(device).long()
 			input_mask = input_mask.to(device).long()
 			segment_ids = segment_ids.to(device).long()
+			label_ids = label_ids.to(device).float()
 			transformer_outputs = model.module.transformer(input_ids = input_ids,
 													token_type_ids=segment_ids,
 													input_mask=input_mask)
@@ -93,6 +94,7 @@ def main():
 			summary = summary.to(device)
 
 			summaries = torch.cat([summaries, summary], dim = 0)
+			labels = torch.cat([labels, label_ids])
 			
 			if i%1000 == 0 and i > 0:
 				logger.info("Embedded and summarized batch {} of {}".format(i, len(dataloader)))
@@ -101,12 +103,15 @@ def main():
 		if i%50000 == 0 and i >0:
 			logger.info("Saving summaries...")
 			torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(i/50000))))
+			torch.save(labels, os.path.join(feature_save_path, args.set_type + '_label_ids_{}.pt'.format(int(i/50000))))
 			summaries = torch.empty(0, config.d_model).to(device)
+			labels= torch.empty(0, config.num_labels).to(device)
 
 	# Save any remaining embedded representations
 	if i%50000 != 0:
 		logger.info("Saving summaries...")
 		torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(math.ceil(i/50000)))))
+		torch.save(labels, os.path.join(feature_save_path, args.set_type + '_label_ids_{}.pt'.format(int(math.ceil(i/50000)))))
 	
 	return
 
