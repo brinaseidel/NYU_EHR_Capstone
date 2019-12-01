@@ -41,7 +41,7 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	doc_ids_sample = pd.factorize(doc_ids_sample.numpy().flatten())[0]
 	doc_ids_sample = torch.from_numpy(doc_ids_sample)
 	data = TensorDataset(input_ids, input_mask, segment_ids, labels, doc_ids)
-	
+	logger.info("Sampled data")
 	sampler = SequentialSampler(data)
 
 	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = False)
@@ -93,13 +93,11 @@ def main():
 	# Load training data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading test dataset")
-	print("Loading test dataset")
 	test_dataloader = load_featurized_examples(batch_size=32, set_type = args.set_type, feature_save_path=feature_save_path)
 
 	# Load saved model
 	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', args.model_id, 'model_checkpoint_'+args.checkpoint)
 	logger.info("Loading saved model from {}".format(model_path))
-	print("Loading saved model from {}".format(model_path))
 	config = XLNetConfig.from_pretrained(os.path.join(model_path, 'config.json'), num_labels=2292) # TODO: check if we need this
 	model = XLNetForSequenceClassification.from_pretrained(model_path, config=config)
 	model.to(device)
@@ -114,10 +112,8 @@ def main():
 	for i, batch in enumerate(test_dataloader):
 		if i % 1000 == 0 and i > 0:
 			logger.info('Entering batch {}'.format(i))
-			print('Entering batch {}'.format(i))
 		if i % args.save_batch == 0 and i > 0:
 			logger.info("Trying to save at batch {}".format(i))
-			print("Trying to save at batch {}".format(i))
 			try_to_save = True
 		model.eval()
 		with torch.no_grad():
@@ -133,7 +129,6 @@ def main():
 				# Check if the docs got split across batches, where last_batch_doc_id would be equal to any of the current doc_ids
 				if all(doc_ids != last_batch_doc_id):
 					logger.info('Saving at batch {}'.format(i))
-					print('Saving at batch {}'.format(i))
 					# Average the representation of the CLS token for all examples from the same document
 					mask = torch.zeros(int(all_doc_ids.max().item())+1, len(summaries))
 					mask[all_doc_ids.long(), torch.arange(len(summaries))] = 1
