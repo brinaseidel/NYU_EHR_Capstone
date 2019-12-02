@@ -22,10 +22,15 @@ import math
 def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/', batch=False):
 	
 	# Read in the correct batch
-	input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(batch)))
+	if batch:
+		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(batch)))
+	else:
+		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries.pt'))
 	# Read in the corresponding labels
-	label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels_{}.pt'.format(batch)))
-
+	if batch:
+		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_label_ids_{}.pt'.format(batch)))
+	else:
+		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
 	data = TensorDataset(input_summaries, label_ids)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
@@ -70,11 +75,10 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 	
 
 	logger.info("***** Running training *****")
-	logger.info("  Num Epochs = %d", args.num_train_epochs)
-	logger.info("  Num Train Examples = %d", n_train_examples)
-	logger.info("  Total train batch size  = %d", args.batch_size)
+	logger.info("  Num Epochs = %d", num_train_epochs)
 
 	global_step = 0
+	saved_batch_order = list(range(1, 1+n_saved_batches))
 
 	# Get path to the file where we will save train performance
 	train_file_name = os.path.join(eval_folder, model_id + "_train_metrics.p")
@@ -95,7 +99,9 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 	for epoch in range(num_train_epochs):
 		train_loss = 0
 		number_steps = 0
-		for saved_batch in range(1, 1+n_saved_batches):
+		# Shuffle the order of the saved data
+		random.shuffle(saved_batch_order)
+		for saved_batch in saved_batch_order:
 			logger.info("Loading batch {} of training data".format(saved_batch))
 			train_dataloader = [] # to avoid storing multiple dataloaders in memory at the same time
 			train_dataloader = load_summarized_examples(batch_size, set_type = "train", feature_save_path=feature_save_path, batch=saved_batch)
