@@ -28,7 +28,7 @@ def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries.pt'))
 	# Read in the corresponding labels
 	if batch:
-		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_label_ids_{}.pt'.format(batch)))
+		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids_{}.pt'.format(batch)))
 	else:
 		label_ids = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
 	data = TensorDataset(input_summaries, label_ids)
@@ -42,20 +42,23 @@ def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 
 def load_and_combine_summarized_examples(batch_size, set_type, n_saved_batches, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/', batch=False):
 	
-	all_input_summaries = None
-	all_label_ids = None
 	for i in range(1, n_saved_batches+1):
 		# Read in the correct batch and  corresponding labels
-		if all_input_summaries:
+		if i > 1:
 			input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(i)))
-			all_input_summaries = torch.cat([all_input_summaries, input_summaries], dim = 0)torch.cat()
-			label_ids = torch.load(os.path.join(feature_save_path, set_type + '_label_ids_{}.pt'.format(i)))
-			all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)torch.cat()
+			print("Summaries Batch ", i, input_summaries.size())
+			all_input_summaries = torch.cat([all_input_summaries, input_summaries], dim = 0)
+			label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids_{}.pt'.format(i)))
+			print("Labels Batch ", i, label_ids.size())
+			all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
 		else:
 			all_input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(i)))
-			all_label_ids = torch.load(os.path.join(feature_save_path, set_type + '_label_ids_{}.pt'.format(i)))
-	
-	data = TensorDataset(input_summaries, label_ids)
+			print("Summaries Batch ", i, all_input_summaries.size())
+			all_label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids_{}.pt'.format(i)))
+			print("Labels Batch ", i, all_label_ids.size())
+	print(all_input_summaries.size())
+	print(all_label_ids.size())
+	data = TensorDataset(all_input_summaries, all_label_ids)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
 	sampler = RandomSampler(data)
@@ -95,7 +98,7 @@ class SlidingClassifier(torch.nn.Module):
 		output = self.projection(output)
 		return output
 
-def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_batches=1):
+def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_batches=1, feature_save_path='/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	global_step = 0
 
 	# Get path to the file where we will save train performance
@@ -277,6 +280,7 @@ def main():
 	set_seeds(seed = args.seed, n_gpu = n_gpu)
 
 	# Load val dataset
+	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading validation dataset")
 	val_dataloader = load_and_combine_summarized_examples(args.batch_size, set_type = "val", n_saved_batches=args.n_saved_val_files, feature_save_path=feature_save_path)
 
@@ -291,7 +295,7 @@ def main():
 	logger.info("  Total train batch size  = %d", args.batch_size)
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=args.n_saved_train_files)
+	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=args.n_saved_train_files, feature_save_path=feature_save_path)
 
 
 if __name__ == "__main__":
