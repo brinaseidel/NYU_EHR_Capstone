@@ -19,7 +19,7 @@ import json
 import pickle
 import random
 
-def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
+def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/', sampling = False):
 	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
 	input_mask = torch.load(os.path.join(feature_save_path, set_type + '_input_mask.pt'))
 	segment_ids = torch.load(os.path.join(feature_save_path, set_type + '_segment_ids.pt'))
@@ -28,7 +28,7 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	# getting the doc id of the last document
 	last_doc_id = torch.max(doc_ids).item()
 	# get 10% of the document ids as a sample to use going forward
-	doc_ids_sampled = random.sample(range(0, last_doc_id+1), k = int((last_doc_id+1)/10))
+	doc_ids_sampled = random.sample(range(0, last_doc_id+1), k = int((last_doc_id+1)/100))
 	indices = []
 	for i in doc_ids_sampled:
 		indices.extend(np.where(doc_ids == i)[0])
@@ -40,7 +40,7 @@ def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 	doc_ids_sample = doc_ids[indices]
 	doc_ids_sample = pd.factorize(doc_ids_sample.numpy().flatten())[0]
 	doc_ids_sample = torch.from_numpy(doc_ids_sample)
-	data = TensorDataset(input_ids, input_mask, segment_ids, labels, doc_ids)
+	data = TensorDataset(input_ids_sample, input_mask_sample, segment_ids_sample, labels_sample, doc_ids_sample)
 	logger.info("Sampled data")
 	sampler = SequentialSampler(data)
 
@@ -88,12 +88,21 @@ def main():
 						type=str,
 						help="Specify train/test file.")
 
+	parser.add_argument("--batch_size",
+                                                type=str,
+                                                help="Specify batch size for load featurized examples.")
+	
+	parser.add_argument("--sampling_data",
+                                                type=bool,
+						default=False,
+                                                help="Whether to sample data or not. Entire dataset is used for the validation set. Sampling is not used.")
+
 	args = parser.parse_args()
 
 	# Load training data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading test dataset")
-	test_dataloader = load_featurized_examples(batch_size=32, set_type = args.set_type, feature_save_path=feature_save_path)
+	test_dataloader = load_featurized_examples(batch_size=args.batch_size, set_type = args.set_type, feature_save_path=feature_save_path, sampling = args.sampling_data)
 
 	# Load saved model
 	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', args.model_id, 'model_checkpoint_'+args.checkpoint)
