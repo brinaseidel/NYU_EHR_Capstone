@@ -100,18 +100,18 @@ def main():
 				logger.info("Embedded and summarized batch {} of {}".format(i, len(dataloader)))
 
 		# Save the embedded representations of the document every 50,000 batches to save memory
-		if i%50000 == 0 and i >0:
+		if i%12000 == 0 and i >0:
 			logger.info("Saving summaries...")
-			torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(i/50000))))
-			torch.save(labels, os.path.join(feature_save_path, args.set_type + '_label_ids_{}.pt'.format(int(i/50000))))
+			torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(i/12000))))
+			torch.save(labels, os.path.join(feature_save_path, args.set_type + '_label_ids_{}.pt'.format(int(i/12000))))
 			summaries = torch.empty(0, config.d_model).to(device)
 			labels= torch.empty(0, config.num_labels).to(device)
 
 	# Save any remaining embedded representations
-	if i%50000 != 0:
+	if i%12000 != 0:
 		logger.info("Saving summaries...")
-		torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(math.ceil(i/50000)))))
-		torch.save(labels, os.path.join(feature_save_path, args.set_type + '_label_ids_{}.pt'.format(int(math.ceil(i/50000)))))
+		torch.save(summaries, os.path.join(feature_save_path, args.set_type + '_summaries_{}.pt'.format(int(math.ceil(i/12000)))))
+		torch.save(labels, os.path.join(feature_save_path, args.set_type + '_label_ids_{}.pt'.format(int(math.ceil(i/12000)))))
 	
 	return
 
