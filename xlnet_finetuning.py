@@ -64,7 +64,7 @@ def train(train_dataloader, val_dataloader, model, optimizer, scheduler, num_tra
 	# Get path to the file where we will save validation performance
 	val_file_name = os.path.join(eval_folder, model_id + "_val_metrics.p")
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
-	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'f1', 'macro_AUC_list'])
+	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'micro_f1', 'macro_f1', 'macro_AUC_list'])
 	
 
 	# Create folder to save all checkpoints for this model

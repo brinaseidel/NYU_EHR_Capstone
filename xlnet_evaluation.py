@@ -18,6 +18,19 @@ from torch.nn import BCEWithLogitsLoss
 import json
 import pickle
 
+def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
+	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
+	input_mask = torch.load(os.path.join(feature_save_path, set_type + '_input_mask.pt'))
+	segment_ids = torch.load(os.path.join(feature_save_path, set_type + '_segment_ids.pt'))
+	labels = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
+
+	# Note: Possible to use SequentialSampler for eval, run time might be better
+	sampler = RandomSampler(data)
+
+	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = True)
+
+	return dataloader
 
 def macroAUC(pred, true):
 	auc = []
@@ -90,12 +103,13 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 	top1_precision = topKPrecision(preds, target, k = 1)
 	top3_precision = topKPrecision(preds, target, k = 3)
 	top5_precision = topKPrecision(preds, target, k = 5)
-	f1 = metrics.f1_score(target, preds)
+	micro_f1 = metrics.f1_score(target, preds>0.5, average='micro')
+	macro_f1 = metrics.f1_score(target, preds>0.5, average='macro')
 
 	logger.info("Evaluation loss : {}".format(str(eval_loss)))
 	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
 	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
-	logger.info("F1 : {}".format(str(f1)))
+	logger.info("micro_f1 : {} , macro_f1 : {}".format(str(micro_f1), str(macro_f1)))
 
 	results = {
 				'loss': eval_loss,
@@ -104,7 +118,8 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 				'top1_precision' : top1_precision ,
 				'top3_precision' : top3_precision ,
 				'top5_precision' : top5_precision,
-				'f1' : f1,
+				'micro_f1' : micro_f1,
+				'macro_f1' : macro_f1,
 				'macro_AUC_list' : macro_AUC_list
 				}
 
@@ -162,7 +177,7 @@ def main():
 	eval_folder = '/gpfs/data/razavianlab/capstone19/evals'
 	val_file_name = os.path.join(eval_folder, args.model_id + "_{}_{}_metrics.p".format(args.checkpoint, args.set_type))
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
-	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'f1', 'macro_AUC_list'])
+	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'micro_f1', 'macro_f1', 'macro_AUC_list'])
 	# Run evaluation
 	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device)
 	# Save results
