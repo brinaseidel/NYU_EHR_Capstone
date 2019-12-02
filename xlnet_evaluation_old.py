@@ -24,7 +24,7 @@ def macroAUC(pred, true):
 			auc.append(metrics.roc_auc_score(true[:,i], pred[:,i]))
 		else:
 			auc.append(0.5)
-	return np.mean(auc)
+	return np.mean(auc), [auc]
 
 def topKPrecision(pred, true, k):
 	# pred: size of n_sample x n_class
@@ -84,14 +84,16 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 	target = torch.cat(target).byte().numpy()
 
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
-	macro_AUC = macroAUC(preds, target)
+	macro_AUC, macro_AUC_list = macroAUC(preds, target)
 	top1_precision = topKPrecision(preds, target, k = 1)
 	top3_precision = topKPrecision(preds, target, k = 3)
 	top5_precision = topKPrecision(preds, target, k = 5)
+	f1 = metrics.f1_score(target, preds)
 
 	logger.info("Evaluation loss : {}".format(str(eval_loss)))
 	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
 	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
+	logger.info("F1 : {}".format(str(f1)))
 
 	results = {
 				'loss': eval_loss,
@@ -99,7 +101,9 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 				'macro_AUC' : macro_AUC,
 				'top1_precision' : top1_precision ,
 				'top3_precision' : top3_precision ,
-				'top5_precision' : top5_precision
+				'top5_precision' : top5_precision,
+				'f1' : f1,
+				'macro_AUC_list' : macro_AUC_list
 				}
 
 	return results
