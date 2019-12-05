@@ -40,29 +40,6 @@ def load_summarized_examples(batch_size, set_type, feature_save_path = '/gpfs/da
 
 	return dataloader
 
-def load_and_combine_summarized_examples(batch_size, set_type, n_saved_batches, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/', batch=False):
-	
-	for i in range(1, n_saved_batches+1):
-		# Read in the correct batch and  corresponding labels
-		if i > 1:
-			input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(i)))
-			all_input_summaries = torch.cat([all_input_summaries, input_summaries], dim = 0)
-			label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids_{}.pt'.format(i)))
-			all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
-		else:
-			all_input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(i)))
-			all_label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids_{}.pt'.format(i)))
-	print(all_input_summaries.size())
-	print(all_label_ids.size())
-	data = TensorDataset(all_input_summaries, all_label_ids)
-
-	# Note: Possible to use SequentialSampler for eval, run time might be better
-	sampler = RandomSampler(data)
-
-	dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size, drop_last = False)
-
-	return dataloader
-
 def set_seeds(seed, n_gpu):
 	random.seed(seed)
 	np.random.seed(seed)
@@ -94,7 +71,7 @@ class SlidingClassifier(torch.nn.Module):
 		output = self.projection(output)
 		return output
 
-def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_batches=1, feature_save_path='/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
+def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_train_batches=1, n_saved_val_batches=1, feature_save_path='/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	global_step = 0
 
 	# Get path to the file where we will save train performance
@@ -107,7 +84,7 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
 	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision'])
 
-	saved_batch_order = list(range(1, 1+n_saved_batches))
+	saved_batch_order = list(range(1, 1+n_saved_train_batches))
 
 	# Create folder to save all checkpoints for this model
 	model_save_path = os.path.join(models_folder, model_id)
@@ -160,8 +137,20 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 					#os.chmod(train_file_name, stat.S_IRWXG)
 				# Log validtion metrics
 				if val_logging_step > 0 and global_step % val_logging_step == 0:
-					# TODO: change to new evaluate functio
-					results = evaluate(dataloader = val_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device, sliding_window=True)
+					eval_losses = []
+					number_steps_list = []
+					targets = np.empty([0, 2292])
+					preds = np.empty([0, 2292])
+					for saved_val_batch in range(1, 1+n_saved_val_batches:
+						logger.info("Loading batch {} of val data".format(saved_val_batch))
+						val_dataloader = [] # to avoid storing multiple dataloaders in memory at the same time
+						val_dataloader = load_summarized_examples(batch_size, set_type = "val", feature_save_path=feature_save_path, batch=saved_val_batch)
+						eval_loss, number_steps, target, pred = get_batched_preds(dataloader = val_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device, sliding_window=True)
+						eval_losses.append(eval_loss)
+						number_steps_list.append(number_steps)
+						targets = np.concatenate((targets, targets))
+						preds = np.concatenate((preds, pred))
+					results = get_combined_eval_metrics(dataloader = val_dataloader, model = model, model_id = model_id,  eval_losses=eval_losses, number_steps=number_steps_list, preds=preds, target=targets, n_gpu=n_gpu, device=device, sliding_window=True)
 					val_results = val_results.append(pd.DataFrame(results, index=[global_step]))
 					pickle.dump(val_results, open(val_file_name, "wb"))
 					os.system("chgrp razavianlab {}".format(val_file_name))
@@ -275,10 +264,7 @@ def main():
 	# Set random seed
 	set_seeds(seed = args.seed, n_gpu = n_gpu)
 
-	# Load val dataset
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
-	logger.info("Loading validation dataset")
-	val_dataloader = load_and_combine_summarized_examples(args.batch_size, set_type = "val", n_saved_batches=args.n_saved_val_files, feature_save_path=feature_save_path)
 
 	# Initialize classifier
 	model = SlidingClassifier(num_layers=args.num_hidden_layers, hidden_size=args.hidden_size, p=args.drop_rate, activation_function=args.activation_function)
@@ -291,7 +277,7 @@ def main():
 	logger.info("  Total train batch size  = %d", args.batch_size)
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_batches=args.n_saved_train_files, feature_save_path=feature_save_path)
+	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_train_batches=args.n_saved_train_files, n_saved_val_batches=args.n_saved_val_files,  feature_save_path=feature_save_path)
 
 
 if __name__ == "__main__":

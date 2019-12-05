@@ -125,6 +125,87 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 
 	return results
 
+
+
+def get_batched_preds(dataloader, model, model_id, n_gpu, device, sliding_window=False):
+	logger.info("***** Getting predicted values for a saved batch *****")
+	logger.info("  Num minibatches = %d", len(dataloader))
+	eval_loss = 0.0
+	number_steps = 0
+	preds = []
+	target = []
+
+	for batch in dataloader:
+		model.eval()
+
+		# If using the sliding window classifier, get processed data
+		if sliding_window:
+			input_summaries, label_ids = batch
+			input_summaries = input_summaries.to(device).float()
+			label_ids = label_ids.to(device).float()
+		else:
+			input_ids, input_mask, segment_ids, label_ids = batch
+			input_ids = input_ids.to(device).long()
+			input_mask = input_mask.to(device).long()
+			segment_ids = segment_ids.to(device).long()
+			label_ids = label_ids.to(device).float()
+
+		with torch.no_grad():
+			if sliding_window:
+				logits = model(inp=input_summaries)
+			else:
+				logits = model(input_ids=input_ids, attention_mask=input_mask, token_type_ids=segment_ids)[0]
+		criterion = BCEWithLogitsLoss()
+		loss = criterion(logits, label_ids)
+
+		# TODO: Check why we take mean
+		#print("loss = ", loss)
+		if n_gpu > 1:
+			eval_loss += loss.mean().item()
+		else:
+			eval_loss += loss.item()
+
+		number_steps += 1
+		preds.append(torch.sigmoid(logits).detach().cpu()) # sigmoid returns probabilities
+		target.append(label_ids.detach().cpu())
+		# not used in calculations, just for sanity checks
+		mean_loss = eval_loss/number_steps
+		preds = torch.cat(preds).numpy()
+		target = torch.cat(target).byte().numpy()
+
+	return eval_loss, number_steps, target, preds
+
+def get_combined_eval_metrics(dataloader, model, model_id, eval_losses, number_steps, preds, target, n_gpu, device, sliding_window=False):
+	'''For data that has been saved in batches'''
+	eval_loss = sum(eval_loss)/ sum(number_steps)
+	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
+	macro_AUC, macro_AUC_list = macroAUC(preds, target)
+	top1_precision = topKPrecision(preds, target, k = 1)
+	top3_precision = topKPrecision(preds, target, k = 3)
+	top5_precision = topKPrecision(preds, target, k = 5)
+	micro_f1 = metrics.f1_score(target, preds>0.5, average='micro')
+	macro_f1 = metrics.f1_score(target, preds>0.5, average='macro')
+
+	logger.info("Evaluation loss : {}".format(str(eval_loss)))
+	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
+	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
+	logger.info("micro_f1 : {} , macro_f1 : {}".format(str(micro_f1), str(macro_f1)))
+
+	results = {
+				'loss': eval_loss,
+				'micro_AUC' : micro_AUC ,
+				'macro_AUC' : macro_AUC,
+				'top1_precision' : top1_precision ,
+				'top3_precision' : top3_precision ,
+				'top5_precision' : top5_precision,
+				'micro_f1' : micro_f1,
+				'macro_f1' : macro_f1,
+				'macro_AUC_list' : macro_AUC_list
+				}
+
+	return results
+
+
 def main():
 
 	# Set device for PyTorch
