@@ -98,13 +98,25 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 	preds = torch.cat(preds).numpy()
 	target = torch.cat(target).byte().numpy()
 
+	#np.set_printoptions(threshold=2292)
+	#preds_when_true = np.ma.array(preds, mask=target)
+	#preds_when_true = np.ma.filled(preds_when_true, np.nan)
+	#preds_when_false = np.ma.array(preds, mask=target==0)
+	#preds_when_false - np.ma.filled(preds_when_false, np.nan)
+	#for quantile in range(1, 100):
+#		print("Quantile {} of predicted values: {}".format(quantile, np.percentile(preds, quantile, axis=0)))
+	#	print("Quantile {} of predicted values where target = True: {}".format(quantile, np.nanpercentile(preds_when_true, quantile, axis=0)))
+	#	print("Quantile {} of predicted values where target = False: {}".format(quantile, np.nanpercentile(preds_when_false, quantile, axis=0)))
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
 	macro_AUC, macro_AUC_list = macroAUC(preds, target)
 	top1_precision = topKPrecision(preds, target, k = 1)
 	top3_precision = topKPrecision(preds, target, k = 3)
 	top5_precision = topKPrecision(preds, target, k = 5)
-	micro_f1 = metrics.f1_score(target, preds>0.5, average='micro')
-	macro_f1 = metrics.f1_score(target, preds>0.5, average='macro')
+	micro_f1 = {}
+	macro_f1 = {}
+	for threshold in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
+		micro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='micro')
+		macro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='macro')
 
 	logger.info("Evaluation loss : {}".format(str(eval_loss)))
 	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
@@ -128,8 +140,6 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 
 
 def get_batched_preds(dataloader, model, model_id, n_gpu, device, sliding_window=False):
-	logger.info("***** Getting predicted values for a saved batch *****")
-	logger.info("  Num minibatches = %d", len(dataloader))
 	eval_loss = 0.0
 	number_steps = 0
 	preds = []
@@ -168,16 +178,14 @@ def get_batched_preds(dataloader, model, model_id, n_gpu, device, sliding_window
 		number_steps += 1
 		preds.append(torch.sigmoid(logits).detach().cpu()) # sigmoid returns probabilities
 		target.append(label_ids.detach().cpu())
-		# not used in calculations, just for sanity checks
-		mean_loss = eval_loss/number_steps
-		preds = torch.cat(preds).numpy()
-		target = torch.cat(target).byte().numpy()
+	preds = torch.cat(preds).numpy()
+	target = torch.cat(target).byte().numpy()
 
 	return eval_loss, number_steps, target, preds
 
 def get_combined_eval_metrics(dataloader, model, model_id, eval_losses, number_steps, preds, target, n_gpu, device, sliding_window=False):
 	'''For data that has been saved in batches'''
-	eval_loss = sum(eval_loss)/ sum(number_steps)
+	eval_loss = sum(eval_losses)/ sum(number_steps)
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
 	macro_AUC, macro_AUC_list = macroAUC(preds, target)
 	top1_precision = topKPrecision(preds, target, k = 1)
@@ -198,8 +206,8 @@ def get_combined_eval_metrics(dataloader, model, model_id, eval_losses, number_s
 				'top1_precision' : top1_precision ,
 				'top3_precision' : top3_precision ,
 				'top5_precision' : top5_precision,
-				'micro_f1' : micro_f1,
-				'macro_f1' : macro_f1,
+				'micro_f1' : [micro_f1],
+				'macro_f1' : [macro_f1],
 				'macro_AUC_list' : macro_AUC_list
 				}
 
