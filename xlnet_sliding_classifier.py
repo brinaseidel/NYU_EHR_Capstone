@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 							  TensorDataset)
 from transformers import (XLNetForSequenceClassification, XLNetConfig)
-from xlnet_evaluation import (evaluate, macroAUC, topKPrecision)
+from xlnet_evaluation import (get_batched_preds, get_combined_eval_metrics,  macroAUC, topKPrecision)
 import random
 import torch.optim as optim
 import torch.nn as nn
@@ -71,7 +71,7 @@ class SlidingClassifier(torch.nn.Module):
 		output = self.projection(output)
 		return output
 
-def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_train_batches=1, n_saved_val_batches=1, feature_save_path='/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
+def train(model, optimizer, num_train_epochs, n_gpu, device, model_id, models_folder = '/gpfs/data/razavianlab/capstone19/models', save_step = 100000, train_logging_step = 1000, val_logging_step = 100000, eval_folder = '/gpfs/data/razavianlab/capstone19/evals', n_saved_train_batches=1, n_saved_val_batches=1, batch_size=32, feature_save_path='/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	global_step = 0
 
 	# Get path to the file where we will save train performance
@@ -82,7 +82,7 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 	# Get path to the file where we will save validation performance
 	val_file_name = os.path.join(eval_folder, model_id + "_val_metrics.p")
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
-	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'micro_f1' ,'macro_f1' : 'macro_AUC_list' ])
+	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'micro_f1' ,'macro_f1', 'macro_AUC_list' ])
 
 	saved_batch_order = list(range(1, 1+n_saved_train_batches))
 
@@ -123,6 +123,7 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 				number_steps += 1
 				mean_loss = train_loss/number_steps
 
+				loss.backward()
 				optimizer.step()
 				model.zero_grad()
 
@@ -137,20 +138,20 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 					#os.chmod(train_file_name, stat.S_IRWXG)
 				# Log validtion metrics
 				if val_logging_step > 0 and global_step % val_logging_step == 0:
+					logger.info("Running validation")
 					eval_losses = []
 					number_steps_list = []
 					targets = np.empty([0, 2292])
-					preds = np.empty([0, 2292])
-					for saved_val_batch in range(1, 1+n_saved_val_batches:
-						logger.info("Loading batch {} of val data".format(saved_val_batch))
+					predictions = np.empty([0, 2292])
+					for saved_val_batch in range(1, 1+n_saved_val_batches):
 						val_dataloader = [] # to avoid storing multiple dataloaders in memory at the same time
 						val_dataloader = load_summarized_examples(batch_size, set_type = "val", feature_save_path=feature_save_path, batch=saved_val_batch)
 						eval_loss, number_steps, target, pred = get_batched_preds(dataloader = val_dataloader, model = model, model_id = model_id, n_gpu=n_gpu, device=device, sliding_window=True)
 						eval_losses.append(eval_loss)
 						number_steps_list.append(number_steps)
-						targets = np.concatenate((targets, targets))
-						preds = np.concatenate((preds, pred))
-					results = get_combined_eval_metrics(dataloader = val_dataloader, model = model, model_id = model_id,  eval_losses=eval_losses, number_steps=number_steps_list, preds=preds, target=targets, n_gpu=n_gpu, device=device, sliding_window=True)
+						targets = np.concatenate((targets, target))
+						predictions = np.concatenate((predictions, pred))
+					results = get_combined_eval_metrics(dataloader = val_dataloader, model = model, model_id = model_id,  eval_losses=eval_losses, number_steps=number_steps_list, preds=predictions, target=targets, n_gpu=n_gpu, device=device, sliding_window=True)
 					val_results = val_results.append(pd.DataFrame(results, index=[global_step]))
 					pickle.dump(val_results, open(val_file_name, "wb"))
 					os.system("chgrp razavianlab {}".format(val_file_name))
@@ -277,7 +278,7 @@ def main():
 	logger.info("  Total train batch size  = %d", args.batch_size)
 
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
-	train(val_dataloader = val_dataloader, model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_train_batches=args.n_saved_train_files, n_saved_val_batches=args.n_saved_val_files,  feature_save_path=feature_save_path)
+	train(model = model, optimizer = optimizer, num_train_epochs = args.num_train_epochs, n_gpu = n_gpu, device = device,  model_id = args.model_id, save_step = args.save_step, train_logging_step = args.train_logging_step, val_logging_step = args.val_logging_step, n_saved_train_batches=args.n_saved_train_files, n_saved_val_batches=args.n_saved_val_files,batch_size=args.batch_size,  feature_save_path=feature_save_path)
 
 
 if __name__ == "__main__":
