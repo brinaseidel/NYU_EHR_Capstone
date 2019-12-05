@@ -82,7 +82,7 @@ def train(val_dataloader, model, optimizer, num_train_epochs, n_gpu, device, mod
 	# Get path to the file where we will save validation performance
 	val_file_name = os.path.join(eval_folder, model_id + "_val_metrics.p")
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
-	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision'])
+	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'micro_f1' ,'macro_f1' : 'macro_AUC_list' ])
 
 	saved_batch_order = list(range(1, 1+n_saved_train_batches))
 
