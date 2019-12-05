@@ -130,8 +130,8 @@ def evaluate(dataloader, model, model_id, n_gpu, device, sliding_window=False):
 				'top1_precision' : top1_precision ,
 				'top3_precision' : top3_precision ,
 				'top5_precision' : top5_precision,
-				'micro_f1' : micro_f1,
-				'macro_f1' : macro_f1,
+				'micro_f1' : [micro_f1],
+				'macro_f1' : [macro_f1],
 				'macro_AUC_list' : macro_AUC_list
 				}
 
@@ -191,8 +191,12 @@ def get_combined_eval_metrics(dataloader, model, model_id, eval_losses, number_s
 	top1_precision = topKPrecision(preds, target, k = 1)
 	top3_precision = topKPrecision(preds, target, k = 3)
 	top5_precision = topKPrecision(preds, target, k = 5)
-	micro_f1 = metrics.f1_score(target, preds>0.5, average='micro')
-	macro_f1 = metrics.f1_score(target, preds>0.5, average='macro')
+	micro_f1 = {}
+	macro_f1 = {}
+	for threshold in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
+		micro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='micro')
+		macro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='macro')
+
 
 	logger.info("Evaluation loss : {}".format(str(eval_loss)))
 	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
