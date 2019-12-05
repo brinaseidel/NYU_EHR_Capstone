@@ -46,16 +46,12 @@ def load_and_combine_summarized_examples(batch_size, set_type, n_saved_batches, 
 		# Read in the correct batch and  corresponding labels
 		if i > 1:
 			input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(i)))
-			print("Summaries Batch ", i, input_summaries.size())
 			all_input_summaries = torch.cat([all_input_summaries, input_summaries], dim = 0)
 			label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids_{}.pt'.format(i)))
-			print("Labels Batch ", i, label_ids.size())
 			all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
 		else:
 			all_input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries_{}.pt'.format(i)))
-			print("Summaries Batch ", i, all_input_summaries.size())
 			all_label_ids = torch.load(os.path.join(feature_save_path, set_type + '_doc_label_ids_{}.pt'.format(i)))
-			print("Labels Batch ", i, all_label_ids.size())
 	print(all_input_summaries.size())
 	print(all_label_ids.size())
 	data = TensorDataset(all_input_summaries, all_label_ids)
