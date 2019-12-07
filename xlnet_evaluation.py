@@ -218,6 +218,31 @@ def get_combined_eval_metrics(dataloader, model, model_id, eval_losses, number_s
 	return results
 
 
+
+class SlidingClassifier(torch.nn.Module):
+	def __init__(self, num_layers, hidden_size, p, input_size=768, num_codes=2292, activation_function='sigmoid'):
+		super(SlidingClassifier, self).__init__()
+		self.activation_function = activation_function
+
+		self.transform_to_hidden = nn.Linear(input_size,hidden_size)
+		self.transforms = nn.ModuleList([nn.Linear(hidden_size, hidden_size)
+						for _ in range(num_layers)])
+		if activation_function == 'sigmoid':
+			self.activation = nn.Sigmoid()
+		self.dropouts = nn.ModuleList([nn.Dropout(p=p)
+						for _ in range(num_layers)])
+		self.projection = nn.Linear(hidden_size, num_codes)
+
+	def forward(self, inp):
+		output = self.transform_to_hidden(inp)
+		for dropout, linear in zip(self.dropouts, self.transforms):
+			output = linear(output)
+			if self.activation_function is not None:
+				output = self.activation(output)
+			output = dropout(output)
+		output = self.projection(output)
+		return output
+
 def main():
 
 	# Set device for PyTorch
@@ -252,6 +277,27 @@ def main():
 	parser.add_argument("--set_type",
 						type=str,
 						help="Specify train/val/test")
+	parser.add_argument("--model_type",
+						type=str,
+						default='xlnet',
+						help="Specify xlnet or classifier")
+	parser.add_argument('--num_hidden_layers',
+						type=int,
+						default=5,
+						help="Number of hidden layers for MLP classifier (not needed to evaluate a model with XLNet architecture)")
+	parser.add_argument('--hidden_size',
+						type=int,
+						default=1024,
+						help="Hidden size for MLP classifier (not needed to evaluate a model with XLNet architecture)")
+	parser.add_argument("--drop_rate",
+						default=0.3,
+						type=float,
+						help="Droprate in between hidden layers for MLP classifer (not needed to evaluate a model with XLNet architecture)")
+	parser.add_argument("--activation_function",
+						default='sigmoid',
+						type=str,
+						help="Activation function for MLP classifer (not needed to evaluate a model with XLNet architecture)")
+
 	args = parser.parse_args()
 
 	# Load training data
@@ -262,8 +308,11 @@ def main():
 	# Load saved model
 	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', args.model_id, 'model_checkpoint_'+args.checkpoint)
 	logger.info("Loading saved model from {}".format(model_path))
-	config = XLNetConfig.from_pretrained(os.path.join(model_path, 'config.json'), num_labels=2292) # TODO: check if we need this
-	model = XLNetForSequenceClassification.from_pretrained(model_path, config=config)
+	if args.model_type == "xlnet":
+		config = XLNetConfig.from_pretrained(os.path.join(model_path, 'config.json'), num_labels=2292) # TODO: check if we need this
+		model = XLNetForSequenceClassification.from_pretrained(model_path, config=config)
+	else: 
+		model = SlidingClassifier(num_layers=args.num_hidden_layers, hidden_size=args.hidden_size, p=args.drop_rate, activation_function=args.activation_function)
 	model.to(device)
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
