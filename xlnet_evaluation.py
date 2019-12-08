@@ -17,13 +17,20 @@ from tqdm import tqdm
 from torch.nn import BCEWithLogitsLoss
 import json
 import pickle
+import torch.optim as optim
+import torch.nn as nn
 
-def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
-	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
-	input_mask = torch.load(os.path.join(feature_save_path, set_type + '_input_mask.pt'))
-	segment_ids = torch.load(os.path.join(feature_save_path, set_type + '_segment_ids.pt'))
-	labels = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
-	data = TensorDataset(input_ids, input_mask, segment_ids, labels)
+def load_featurized_examples(batch_size, set_type, sliding_window=False, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
+	if sliding_window:
+		input_summaries = torch.load(os.path.join(feature_save_path, set_type + '_summaries.pt'))
+		labels = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+		data = TensorDataset(input_summaries, labels)
+	else:
+		input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
+		input_mask = torch.load(os.path.join(feature_save_path, set_type + '_input_mask.pt'))
+		segment_ids = torch.load(os.path.join(feature_save_path, set_type + '_segment_ids.pt'))
+		labels = torch.load(os.path.join(feature_save_path, set_type + '_labels.pt'))
+		data = TensorDataset(input_ids, input_mask, segment_ids, labels)
 
 	# Note: Possible to use SequentialSampler for eval, run time might be better
 	sampler = RandomSampler(data)
@@ -303,7 +310,7 @@ def main():
 	# Load training data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
 	logger.info("Loading {} dataset".format(args.set_type))
-	test_dataloader = load_featurized_examples(batch_size=32, set_type = args.set_type, feature_save_path=feature_save_path)
+	test_dataloader = load_featurized_examples(batch_size=32, set_type = args.set_type, sliding_window = (args.model_type=="classifier"), feature_save_path=feature_save_path)
 
 	# Load saved model
 	model_path = os.path.join('/gpfs/data/razavianlab/capstone19/models/', args.model_id, 'model_checkpoint_'+args.checkpoint)
@@ -321,7 +328,7 @@ def main():
 	# Create empty data frame to store evaluation results in (to be written to val_file_name)
 	val_results = pd.DataFrame(columns=['loss', 'micro_AUC', 'macro_AUC', 'top1_precision', 'top3_precision', 'top5_precision', 'micro_f1', 'macro_f1', 'macro_AUC_list'])
 	# Run evaluation
-	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device)
+	results = evaluate(dataloader = test_dataloader, model = model, model_id = args.model_id, n_gpu=n_gpu, device=device, sliding_window = (args.model_type=="classifier"))
 	# Save results
 	val_results = val_results.append(pd.DataFrame(results, index=[0]))
 	pickle.dump(val_results, open(val_file_name, "wb"))
