@@ -319,7 +319,9 @@ def main():
 		config = XLNetConfig.from_pretrained(os.path.join(model_path, 'config.json'), num_labels=2292) # TODO: check if we need this
 		model = XLNetForSequenceClassification.from_pretrained(model_path, config=config)
 	else: 
+		saved_model = torch.load(os.path.join(model_path, 'model.pt'))
 		model = SlidingClassifier(num_layers=args.num_hidden_layers, hidden_size=args.hidden_size, p=args.drop_rate, activation_function=args.activation_function)
+		model.state_dict = saved_model['model']
 	model.to(device)
 	model = torch.nn.DataParallel(model, device_ids=list(range(n_gpu)))
 
