@@ -66,17 +66,14 @@ def main():
 	parser.add_argument("--feature_save_dir",
 						type=str,
 						help="Preprocessed data (features) should be saved at '/gpfs/data/razavianlab/capstone19/preprocessed_data/{feature_save_dir}'. ")
-	parser.add_argument("--save_batch",
+	parser.add_argument("--batch_size",
 						type=int,
-						default=50000,
-						help="The number of batches before saving a summarized set of sliding embeddings and labels")
+						default=32,
+						help="Specify batch size for load featurized examples.")
 	parser.add_argument("--set_type",
 						type=str,
-						help="Specify train/test file.")
+						help="Specify train/val/test file.")
 
-	parser.add_argument("--batch_size",
-                                                type=str,
-                                                help="Specify batch size for load featurized examples.")
 	
 	args = parser.parse_args()
 
@@ -95,10 +92,11 @@ def main():
 
 
 	last_batch_doc_id = -1 # Used to determine if the last document of the last batch was split up or not
-	stored_logits = = torch.empty(0, 2292).to(device) # Stores logits until we finish a batch where the last document was not split up
+	stored_logits = torch.empty(0, 2292).to(device) # Stores logits until we finish a batch where the last document was not split up
 	all_doc_ids = torch.empty(0).to(device) # Stores the list of doc ids corresponding to the rows of stored_logits
 	all_combined_logits = torch.empty(0, 2292).to(device) # For all documents, stores the elementwise max of all logits for that document
-	all_label_ids = torch.empty(0, 2292).to(device)	
+	all_label_ids = torch.empty(0, 2292).to(device)
+	stored_label_ids = torch.empty(0, 2292).to(device)	
 	for i, batch in enumerate(dataloader):
 		if i % 1000 == 0 and i > 0:
 			logger.info('Entering batch {}'.format(i))
@@ -118,8 +116,9 @@ def main():
 
 			# Check if any part of the last document in stored_logits is in this batch,
 			# indicating that a document got split across stored_logits and this batch 
+			print(last_batch_doc_id, all_doc_ids)
 			if all(doc_ids != last_batch_doc_id) and  last_batch_doc_id != -1: # This means that the last batch of stored_logits did not get split up
-
+				print("Combining logits...")
 				# If nothing was split, then we can combine the logits in stored_logits by document
 				# and store the results in all_combined_logits
 
@@ -129,34 +128,38 @@ def main():
 				for (j, doc_id) in enumerate(all_doc_ids):
 					if doc_id.item() != last_doc_id: 
 						# Get the pointwise max over all logits for the last document
-						combined_logits = torch.max(to_combine, dim=0)[0] # pointwise max of all logits for the last document
+						combined_logits = torch.max(to_combine, dim=0)[0].reshape(1, -1) # pointwise max of all logits for the last document
 						all_combined_logits = torch.cat([all_combined_logits, combined_logits], dim=0)
 						# Create to_combine for the new document and update last_doc_id
-						to_combine = stored_logits[j, :]
+						to_combine = stored_logits[j, :].reshape(1, -1)
 						last_doc_id = doc_id.item()
 					else:
 						# Add these logits to to_combine with the other logits for this document
-						to_combine = torch.cat([to_combine, stored_logits[j, :]], dim=0)
+						to_combine = torch.cat([to_combine, stored_logits[j, :].reshape(1, -1)], dim=0)
 
 				# Create an object storing one copy of the labels per document
 				last_doc_id = -1
-				label_ids = torch.empty(0, all_label_ids.size()[1]).to(device)
+				label_ids = torch.empty(0, 2292).to(device)
 				for (j, doc_id) in enumerate(all_doc_ids):
 					if doc_id.item() != last_doc_id:
-						label_ids = torch.cat([label_ids, all_label_ids[j].unsqueeze(0)])
+						label_ids = torch.cat([label_ids, stored_label_ids[j].unsqueeze(0)])
 						last_doc_id = doc_id.item()
+				all_label_ids = torch.cat([all_label_ids, label_ids], dim=0)
 
 				all_doc_ids = torch.empty(0).to(device)
 				stored_logits = torch.empty(0, 2292).to(device)
-				all_label_ids = torch.empty(0, 2292).to(device)	
+				stored_label_ids = torch.empty(0, 2292).to(device)
+				stored_logits = torch.cat([stored_logits, logits], dim=0)
+				all_doc_ids = torch.cat([all_doc_ids, doc_ids], dim = 0)
+				stored_label_ids = torch.cat([stored_label_ids, label_ids], dim = 0)
 				last_batch_doc_id =  doc_ids[-1]
 					
 
 			# If a doc was split, then save these logits until we find a batch where no doc was split
 			else:
-				stored_logits = np.concatenate((stored_logits, logits))
+				stored_logits = torch.cat([stored_logits, logits], dim=0)
 				all_doc_ids = torch.cat([all_doc_ids, doc_ids], dim = 0)
-				all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
+				stored_label_ids = torch.cat([stored_label_ids, label_ids], dim = 0)
 				last_batch_doc_id =  doc_ids[-1]
 
 	preds = preds.append(torch.sigmoid(all_combined_logits).detach().cpu()) # sigmoid returns probabilities
