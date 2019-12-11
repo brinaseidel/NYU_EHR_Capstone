@@ -1,4 +1,4 @@
- import torch
+import torch
 import logging
 import argparse
 import os
@@ -74,8 +74,8 @@ def main():
 	args = parser.parse_args()
 
 	# Allocate space for preds and targets
-	targets = np.zeros((args.save_batch*args.n_saved_batches, 2292))
-	preds = np.zeros((args.save_batch*args.n_saved_batches, 2292))
+	targets = np.zeros((args.save_batch*args.n_saved_batches*32, 2292))
+	preds = np.zeros((args.save_batch*args.n_saved_batches*32, 2292))
 
 	# Load data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
@@ -84,7 +84,7 @@ def main():
 		if i%10 == 0 and i > 0:
 			logger.info("Loading saved batch {}".format(i))
 		batch_targets = torch.load(os.path.join(feature_save_path, "{}_label_ids_{}.pt".format(args.set_type, i)))
-		batch_targets = torch.byte().detach().cpu().numpy()
+		batch_targets = batch_targets.byte().detach().cpu().numpy()
 		batch_preds = torch.load(os.path.join(feature_save_path, "{}_logits_{}.pt".format(args.set_type, i)))
 		batch_preds = torch.sigmoid(batch_preds).detach().cpu()
 		targets[saved_so_far:saved_so_far+ batch_targets.shape[0], :] = batch_targets
@@ -94,16 +94,16 @@ def main():
 	targets = targets[:saved_so_far, ]
 	preds = preds[:saved_so_far, ]
 
-	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
-	macro_AUC, macro_AUC_list = macroAUC(preds, target)
-	top1_precision = topKPrecision(preds, target, k = 1)
-	top3_precision = topKPrecision(preds, target, k = 3)
-	top5_precision = topKPrecision(preds, target, k = 5)
+	micro_AUC = metrics.roc_auc_score(targets, preds, average='micro')
+	macro_AUC, macro_AUC_list = macroAUC(preds, targets)
+	top1_precision = topKPrecision(preds, targets, k = 1)
+	top3_precision = topKPrecision(preds, targets, k = 3)
+	top5_precision = topKPrecision(preds, targets, k = 5)
 	micro_f1 = {}
 	macro_f1 = {}
 	for threshold in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
-			micro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='micro')
-			macro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='macro')
+			micro_f1['threshold {}'.format(threshold)] = metrics.f1_score(targets, preds>threshold, average='micro')
+			macro_f1['threshold {}'.format(threshold)] = metrics.f1_score(targets, preds>threshold, average='macro')
 	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
 	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
 	logger.info("micro_f1 : {} , macro_f1 : {}".format(str(micro_f1), str(macro_f1)))
