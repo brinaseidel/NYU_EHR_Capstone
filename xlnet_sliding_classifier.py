@@ -139,12 +139,10 @@ def main():
 
 				# Create an object storing one copy of the labels per document
 				last_doc_id = -1
-				label_ids = torch.empty(0, 2292).to(device)
 				for (j, doc_id) in enumerate(all_doc_ids):
 					if doc_id.item() != last_doc_id:
-						label_ids = torch.cat([label_ids, stored_label_ids[j].unsqueeze(0)])
+						all_label_ids = torch.cat([all_label_ids, stored_label_ids[j].unsqueeze(0)])
 						last_doc_id = doc_id.item()
-				all_label_ids = torch.cat([all_label_ids, label_ids], dim=0)
 
 				all_doc_ids = torch.empty(0).to(device)
 				stored_logits = torch.empty(0, 2292).to(device)
