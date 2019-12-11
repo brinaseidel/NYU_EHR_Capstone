@@ -18,6 +18,7 @@ from torch.nn import BCEWithLogitsLoss
 import json
 import pickle
 import random
+from xlnet_evaluation import (macroAUC, topKPrecision)
 
 def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
@@ -79,7 +80,7 @@ def main():
 
 	# Load data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
-	logger.info("Loading test dataset")
+	logger.info("Loading dataset")
 	dataloader = load_featurized_examples(batch_size=args.batch_size, set_type = args.set_type, feature_save_path=feature_save_path)
 
 	# Load saved model
@@ -116,7 +117,6 @@ def main():
 
 			# Check if any part of the last document in stored_logits is in this batch,
 			# indicating that a document got split across stored_logits and this batch 
-			print(last_batch_doc_id, all_doc_ids)
 			if all(doc_ids != last_batch_doc_id) and  last_batch_doc_id != -1: # This means that the last batch of stored_logits did not get split up
 				print("Combining logits...")
 				# If nothing was split, then we can combine the logits in stored_logits by document
@@ -136,13 +136,16 @@ def main():
 					else:
 						# Add these logits to to_combine with the other logits for this document
 						to_combine = torch.cat([to_combine, stored_logits[j, :].reshape(1, -1)], dim=0)
+				combined_logits = torch.max(to_combine, dim=0)[0].reshape(1, -1)
+				all_combined_logits = torch.cat([all_combined_logits, combined_logits], dim=0)
 
 				# Create an object storing one copy of the labels per document
 				last_doc_id = -1
 				for (j, doc_id) in enumerate(all_doc_ids):
-					if doc_id.item() != last_doc_id:
-						all_label_ids = torch.cat([all_label_ids, stored_label_ids[j].unsqueeze(0)])
-						last_doc_id = doc_id.item()
+					if (doc_id.item() != last_doc_id) and last_doc_id != -1:
+						all_label_ids = torch.cat([all_label_ids, stored_label_ids[j-1].unsqueeze(0)])
+					last_doc_id = doc_id.item()
+				all_label_ids = torch.cat([all_label_ids, stored_label_ids[j].unsqueeze(0)])
 
 				all_doc_ids = torch.empty(0).to(device)
 				stored_logits = torch.empty(0, 2292).to(device)
@@ -160,9 +163,34 @@ def main():
 				stored_label_ids = torch.cat([stored_label_ids, label_ids], dim = 0)
 				last_batch_doc_id =  doc_ids[-1]
 
-	preds = preds.append(torch.sigmoid(all_combined_logits).detach().cpu()) # sigmoid returns probabilities
-	preds = torch.cat(preds).numpy()
-	target = torch.cat(all_label_ids).byte().numpy()
+	# Store logits and labels for the final batch(es)
+	last_doc_id = all_doc_ids[0].item()
+	to_combine = torch.empty(0, 2292).to(device) 
+	for (j, doc_id) in enumerate(all_doc_ids):
+		if doc_id.item() != last_doc_id: 
+			# Get the pointwise max over all logits for the last document
+			combined_logits = torch.max(to_combine, dim=0)[0].reshape(1, -1) # pointwise max of all logits for the last document
+			all_combined_logits = torch.cat([all_combined_logits, combined_logits], dim=0)
+			# Create to_combine for the new document and update last_doc_id
+			to_combine = stored_logits[j, :].reshape(1, -1)
+			last_doc_id = doc_id.item()
+		else:
+			# Add these logits to to_combine with the other logits for this document
+			to_combine = torch.cat([to_combine, stored_logits[j, :].reshape(1, -1)], dim=0)
+	combined_logits = torch.max(to_combine, dim=0)[0].reshape(1, -1) # pointwise max of all logits for the last document
+	all_combined_logits = torch.cat([all_combined_logits, combined_logits], dim=0)
+
+	# Create an object storing one copy of the labels per document
+	last_doc_id = -1
+	for (j, doc_id) in enumerate(all_doc_ids):
+		if (doc_id.item() != last_doc_id) and last_doc_id != -1:
+			all_label_ids = torch.cat([all_label_ids, stored_label_ids[j-1].unsqueeze(0)])
+		last_doc_id = doc_id.item()
+	all_label_ids = torch.cat([all_label_ids, stored_label_ids[j].unsqueeze(0)])
+
+	preds = torch.sigmoid(all_combined_logits).detach().cpu() # sigmoid returns probabilities
+	preds = preds.numpy()
+	target = all_label_ids.byte().detach().cpu().numpy()
 
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
 	macro_AUC, macro_AUC_list = macroAUC(preds, target)
