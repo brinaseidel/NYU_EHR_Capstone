@@ -19,6 +19,7 @@ import json
 import pickle
 import random
 from xlnet_evaluation import (macroAUC, topKPrecision)
+import math
 
 def load_featurized_examples(batch_size, set_type, feature_save_path = '/gpfs/data/razavianlab/capstone19/preprocessed_data/small/'):
 	input_ids = torch.load(os.path.join(feature_save_path, set_type + '_input_ids.pt'))
@@ -75,7 +76,9 @@ def main():
 						type=str,
 						help="Specify train/val/test file.")
 
-	
+	parser.add_argument("--save_batch",
+						type=int,
+						help="Save files every save_batch batches.")
 	args = parser.parse_args()
 
 	# Load data
@@ -118,7 +121,6 @@ def main():
 			# Check if any part of the last document in stored_logits is in this batch,
 			# indicating that a document got split across stored_logits and this batch 
 			if all(doc_ids != last_batch_doc_id) and  last_batch_doc_id != -1: # This means that the last batch of stored_logits did not get split up
-				print("Combining logits...")
 				# If nothing was split, then we can combine the logits in stored_logits by document
 				# and store the results in all_combined_logits
 
@@ -163,6 +165,13 @@ def main():
 				stored_label_ids = torch.cat([stored_label_ids, label_ids], dim = 0)
 				last_batch_doc_id =  doc_ids[-1]
 
+		# Save every number of steps and clear out the tensors to save memory
+		if i%args.save_batch == 0 and i > 0:
+			torch.save(all_label_ids, os.path.join(feature_save_path, "{}_label_ids_{}.pt".format(args.set_type, int(i/args.save_batch))))
+			torch.save(all_combined_logits, os.path.join(feature_save_path, "{}_logits_{}.pt".format(args.set_type, int(i/args.save_batch))))
+			all_combined_logits = torch.empty(0, 2292).to(device)
+			all_label_ids = torch.empty(0, 2292).to(device)
+			logger.info("Saved batch {}".format(int(i/args.save_batch))) 
 	# Store logits and labels for the final batch(es)
 	last_doc_id = all_doc_ids[0].item()
 	to_combine = torch.empty(0, 2292).to(device) 
@@ -187,25 +196,10 @@ def main():
 			all_label_ids = torch.cat([all_label_ids, stored_label_ids[j-1].unsqueeze(0)])
 		last_doc_id = doc_id.item()
 	all_label_ids = torch.cat([all_label_ids, stored_label_ids[j].unsqueeze(0)])
+	torch.save(all_label_ids, os.path.join(feature_save_path, "{}_label_ids_{}.pt".format(args.set_type, int(math.ceil(i/args.save_batch)))))
+	torch.save(all_combined_logits, os.path.join(feature_save_path, "{}_logits_{}.pt".format(args.set_type, int(math.ceil(i/args.save_batch)))))
+	logger.info("Saved batch {}".format(int(math.ceil(i/args.save_batch))))
 
-	preds = torch.sigmoid(all_combined_logits).detach().cpu() # sigmoid returns probabilities
-	preds = preds.numpy()
-	target = all_label_ids.byte().detach().cpu().numpy()
-
-	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
-	macro_AUC, macro_AUC_list = macroAUC(preds, target)
-	top1_precision = topKPrecision(preds, target, k = 1)
-	top3_precision = topKPrecision(preds, target, k = 3)
-	top5_precision = topKPrecision(preds, target, k = 5)
-	micro_f1 = {}
-	macro_f1 = {}
-	for threshold in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
-		micro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='micro')
-		macro_f1['threshold {}'.format(threshold)] = metrics.f1_score(target, preds>threshold, average='macro')
-
-	logger.info("micro_AUC : {} ,  macro_AUC : {}".format(str(micro_AUC) ,str(macro_AUC)))
-	logger.info("top1_precision : {} ,  top3_precision : {}, top5_precision : {}".format(str(top1_precision), str(top3_precision), str(top5_precision)))
-	logger.info("micro_f1 : {} , macro_f1 : {}".format(str(micro_f1), str(macro_f1)))
 
 	return
 
