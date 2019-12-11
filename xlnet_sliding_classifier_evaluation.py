@@ -79,6 +79,7 @@ def main():
 
 	# Load data
 	feature_save_path = os.path.join('/gpfs/data/razavianlab/capstone19/preprocessed_data/', args.feature_save_dir)
+	saved_so_far = 0
 	for i in range(1, args.n_saved_batches + 1):
 		if i%10 == 0 and i > 0:
 			logger.info("Loading saved batch {}".format(i))
@@ -86,12 +87,12 @@ def main():
 		batch_targets = torch.byte().detach().cpu().numpy()
 		batch_preds = torch.load(os.path.join(feature_save_path, "{}_logits_{}.pt".format(args.set_type, i)))
 		batch_preds = torch.sigmoid(batch_preds).detach().cpu()
-		targets[((i-1)*args.save_batch):((i-1)*args.save_batch + batch_targets.shape[0]), :] = batch_targets
-		preds[((i-1)*args.save_batch):((i-1)*args.save_batch + batch_targets.shape[0]), :] = batch_preds
+		targets[saved_so_far:saved_so_far+ batch_targets.shape[0], :] = batch_targets
+		preds[saved_so_far:saved_so_far + batch_preds.shape[0], :] = batch_preds
+		saved_so_far = saved_so_far + batch_preds.shape[0]
 	# Cut targets and preds to the right length (in case the final saved batched was shorter than args.save_batch)
-	if (batch_targets.shape[0] < args.save_batch):
-		targets = targets[:-(args.save_batch - batch_targets.shape[0]), ]
-		preds = preds[:-(args.save_batch - batch_preds.shape[0]), ]
+	targets = targets[:saved_so_far, ]
+	preds = preds[:saved_so_far, ]
 
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
 	macro_AUC, macro_AUC_list = macroAUC(preds, target)
