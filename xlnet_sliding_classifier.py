@@ -98,6 +98,7 @@ def main():
 	stored_logits = = torch.empty(0, 2292).to(device) # Stores logits until we finish a batch where the last document was not split up
 	all_doc_ids = torch.empty(0).to(device) # Stores the list of doc ids corresponding to the rows of stored_logits
 	all_combined_logits = torch.empty(0, 2292).to(device) # For all documents, stores the elementwise max of all logits for that document
+	all_label_ids = torch.empty(0, 2292).to(device)	
 	for i, batch in enumerate(dataloader):
 		if i % 1000 == 0 and i > 0:
 			logger.info('Entering batch {}'.format(i))
@@ -137,19 +138,30 @@ def main():
 						# Add these logits to to_combine with the other logits for this document
 						to_combine = torch.cat([to_combine, stored_logits[j, :]], dim=0)
 
+				# Create an object storing one copy of the labels per document
+				last_doc_id = -1
+				label_ids = torch.empty(0, all_label_ids.size()[1]).to(device)
+				for (j, doc_id) in enumerate(all_doc_ids):
+					if doc_id.item() != last_doc_id:
+						label_ids = torch.cat([label_ids, all_label_ids[j].unsqueeze(0)])
+						last_doc_id = doc_id.item()
+
 				all_doc_ids = torch.empty(0).to(device)
 				stored_logits = torch.empty(0, 2292).to(device)
+				all_label_ids = torch.empty(0, 2292).to(device)	
 				last_batch_doc_id =  doc_ids[-1]
+					
+
 			# If a doc was split, then save these logits until we find a batch where no doc was split
 			else:
 				stored_logits = np.concatenate((stored_logits, logits))
 				all_doc_ids = torch.cat([all_doc_ids, doc_ids], dim = 0)
+				all_label_ids = torch.cat([all_label_ids, label_ids], dim = 0)
 				last_batch_doc_id =  doc_ids[-1]
 
 	preds = preds.append(torch.sigmoid(all_combined_logits).detach().cpu()) # sigmoid returns probabilities
-	target = torch.load(os.path.join(feature_save_path, args.set_type + '_labels.pt'))
 	preds = torch.cat(preds).numpy()
-	target = torch.cat(target).byte().numpy()
+	target = torch.cat(all_label_ids).byte().numpy()
 
 	micro_AUC = metrics.roc_auc_score(target, preds, average='micro')
 	macro_AUC, macro_AUC_list = macroAUC(preds, target)
