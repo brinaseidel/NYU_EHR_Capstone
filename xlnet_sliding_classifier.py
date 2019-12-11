@@ -97,7 +97,6 @@ def train(model, optimizer, num_train_epochs, n_gpu, device, model_id, models_fo
 		# Shuffle the order of the saved data
 		random.shuffle(saved_batch_order)
 		for saved_batch in saved_batch_order:
-			logger.info("Loading batch {} of training data".format(saved_batch))
 			train_dataloader = [] # to avoid storing multiple dataloaders in memory at the same time
 			train_dataloader = load_summarized_examples(batch_size, set_type = "train", feature_save_path=feature_save_path, batch=saved_batch)
 				
